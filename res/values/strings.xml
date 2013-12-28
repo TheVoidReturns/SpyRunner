@@ -4,5 +4,16 @@
     <string name="app_name">Spy Runner</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_mission_control">MissionControlActivity</string>
+    <string name="title_activity_mission_briefing">MissionBriefingActivity</string>
+    <string name="title_activity_mission_select">MissionSelectActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_bonus_feature">BonusFeatureActivity</string>
+    <string name="title_activity_spy_profile">SpyProfileActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_review_mission">ReviewMissionActivity</string>
+    <string name="title_activity_stat_track">StatTrackActivity</string>
+    <string name="title_activity_music_setup">MusicSetupActivity</string>
+    <string name="title_activity_mission_log">MissionLogActivity</string>
 
 </resources>

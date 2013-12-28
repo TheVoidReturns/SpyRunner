@@ -30,24 +30,34 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int fullscreen_content_controls=0x7f070001;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
-        public static final int briefingscreen=0x7f030001;
-        public static final int mainmenu=0x7f030002;
-        public static final int missioncontrol=0x7f030003;
-        public static final int missionlog=0x7f030004;
-        public static final int missionselect=0x7f030005;
-        public static final int musicsettings=0x7f030006;
-        public static final int mysterybonus=0x7f030007;
-        public static final int reviewmissions=0x7f030008;
-        public static final int settings=0x7f030009;
-        public static final int splash=0x7f03000a;
-        public static final int spyprofile=0x7f03000b;
-        public static final int trackstats=0x7f03000c;
+        public static final int activity_bonus_feature=0x7f030000;
+        public static final int activity_main=0x7f030001;
+        public static final int activity_mission_briefing=0x7f030002;
+        public static final int activity_mission_control=0x7f030003;
+        public static final int activity_mission_log=0x7f030004;
+        public static final int activity_mission_select=0x7f030005;
+        public static final int activity_music_setup=0x7f030006;
+        public static final int activity_review_mission=0x7f030007;
+        public static final int activity_settings=0x7f030008;
+        public static final int activity_splash=0x7f030009;
+        public static final int activity_spy_profile=0x7f03000a;
+        public static final int activity_stat_track=0x7f03000b;
     }
     public static final class string {
         public static final int app_name=0x7f050000;
         public static final int dummy_button=0x7f050001;
         public static final int dummy_content=0x7f050002;
+        public static final int title_activity_bonus_feature=0x7f050007;
+        public static final int title_activity_mission_briefing=0x7f050004;
+        public static final int title_activity_mission_control=0x7f050003;
+        public static final int title_activity_mission_log=0x7f05000d;
+        public static final int title_activity_mission_select=0x7f050005;
+        public static final int title_activity_music_setup=0x7f05000c;
+        public static final int title_activity_review_mission=0x7f05000a;
+        public static final int title_activity_settings=0x7f050009;
+        public static final int title_activity_splash=0x7f050006;
+        public static final int title_activity_spy_profile=0x7f050008;
+        public static final int title_activity_stat_track=0x7f05000b;
     }
     public static final class style {
         /** 
