@@ -160,3 +160,5 @@ public class MainActivity extends Activity {
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
 }
+
+//Hello Robin this is a test
