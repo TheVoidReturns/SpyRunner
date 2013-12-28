@@ -161,4 +161,8 @@ public class MainActivity extends Activity {
 	}
 }
 
+<<<<<<< HEAD
 //Hello Robin this is a test
+=======
+//test from Robin
+>>>>>>> branch 'master' of https://github.com/TheVoidReturns/SpyRunner.git
