@@ -50,6 +50,14 @@
                 android:layout_weight="1"
                 android:text="@string/dummy_button" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="93dp"
+            android:layout_height="93dp"
+            android:layout_gravity="center"
+            android:src="@drawable/robin8bit" />
+
     </FrameLayout>
 
 </FrameLayout>
