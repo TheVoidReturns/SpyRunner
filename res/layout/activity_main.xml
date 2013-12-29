@@ -42,7 +42,7 @@
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
 
-                       <Button
+            <Button
                 android:id="@+id/selectmissionbutton"
                 style="?buttonBarButtonStyle"
                 android:layout_width="0dp"

@@ -37,35 +37,10 @@
             style="?buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="bottom|center_horizontal"
             android:background="@color/black_overlay"
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
-
-            <Button
-                android:id="@+id/selectmissionbutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_mission_select" />
-
-            <Button
-                android:id="@+id/spyprofilebutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_spy_profile" />
-
-            <Button
-                android:id="@+id/settingsbutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_settings" />
-
             <Button
                 android:id="@+id/reviewmissionsbutton"
                 style="?buttonBarButtonStyle"
@@ -74,13 +49,6 @@
                 android:layout_weight="1"
                 android:text="@string/title_activity_review_mission" />
 
-            <Button
-                android:id="@+id/mysterycontentbutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_bonus_feature" />
         </LinearLayout>
     </FrameLayout>
 
