@@ -43,7 +43,7 @@
             tools:ignore="UselessParent" >
 
             <Button
-                android:id="@+id/dummy_button"
+                android:id="@+id/mission_select"
                 style="?buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
