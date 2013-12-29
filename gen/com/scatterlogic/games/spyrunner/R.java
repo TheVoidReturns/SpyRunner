@@ -29,12 +29,17 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int bonusfeaturebutton=0x7f070006;
         public static final int fullscreen_content=0x7f070000;
         public static final int fullscreen_content_controls=0x7f070001;
-        public static final int imageView1=0x7f070008;
-        public static final int mission_select=0x7f070002;
+        public static final int imageView1=0x7f07000d;
+        public static final int mission_briefing=0x7f07000b;
+        public static final int mission_log=0x7f07000a;
+        public static final int mission_review=0x7f070009;
         public static final int missionselectbutton=0x7f070003;
+        public static final int musicsettings=0x7f070002;
         public static final int reviewmissionsbutton=0x7f070004;
         public static final int settingsbutton=0x7f070007;
         public static final int spyprofilebutton=0x7f070005;
+        public static final int start_mission=0x7f070008;
+        public static final int stat_select=0x7f07000c;
     }
     public static final class layout {
         public static final int activity_bonus_feature=0x7f030000;

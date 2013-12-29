@@ -42,7 +42,7 @@
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
             <Button
-                android:id="@+id/reviewmissionsbutton"
+                android:id="@+id/mission_log"
                 style="?buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

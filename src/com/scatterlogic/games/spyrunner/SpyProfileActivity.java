@@ -4,11 +4,13 @@ import com.scatterlogic.games.spyrunner.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -45,6 +47,7 @@ public class SpyProfileActivity extends Activity {
 	 */
 	private SystemUiHider mSystemUiHider;
 
+		Intent statSelect;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -114,8 +117,15 @@ public class SpyProfileActivity extends Activity {
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
-		findViewById(R.id.mission_select).setOnTouchListener(
+		findViewById(R.id.stat_select).setOnTouchListener(
 				mDelayHideTouchListener);
+		statSelect = new Intent(this, StatTrackActivity.class);
+		findViewById(R.id.stat_select).setOnClickListener(new OnClickListener() {
+		    public void onClick(View v) {
+		    	//this will eventually be contextualised with putExtras
+		    	startActivity(statSelect);
+		    } 
+		});
 	}
 
 	@Override
