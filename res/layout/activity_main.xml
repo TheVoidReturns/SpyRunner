@@ -6,82 +6,55 @@
     tools:context=".MainActivity" >
 
     <!--
-         The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc.
-    -->
-
-    <TextView
-        android:id="@+id/fullscreen_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:keepScreenOn="true"
-        android:text="@string/dummy_content"
-        android:textColor="#33b5e5"
-        android:textSize="50sp"
-        android:textStyle="bold" />
-
-    <!--
          This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows.
     -->
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true" >
+        android:layout_height="match_parent" >
 
-        <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
-            style="?buttonBarStyle"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/missionselectbutton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent" >
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_activity_mission_select" />
+        
+        <Button
+            android:id="@+id/reviewmissionsbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/missionselectbutton"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_activity_review_mission" />
 
-            <Button
-                android:id="@+id/selectmissionbutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_mission_select" />
+		<Button
+            android:id="@+id/spyprofilebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/reviewmissionsbutton"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="false"
+            android:text="@string/title_activity_spy_profile" />
+        
+        <Button
+            android:id="@+id/bonusfeaturebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spyprofilebutton"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_activity_bonus_feature" />
+		
+        <Button
+            android:id="@+id/settingsbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bonusfeaturebutton"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_activity_settings" />
 
-            <Button
-                android:id="@+id/spyprofilebutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_spy_profile" />
-
-            <Button
-                android:id="@+id/settingsbutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_settings" />
-
-            <Button
-                android:id="@+id/reviewmissionsbutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_review_mission" />
-
-            <Button
-                android:id="@+id/mysterycontentbutton"
-                style="?buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_activity_bonus_feature" />
-        </LinearLayout>
-    </FrameLayout>
+    </RelativeLayout>
 
 </FrameLayout>
