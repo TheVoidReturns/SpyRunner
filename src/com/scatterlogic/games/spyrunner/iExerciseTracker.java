@@ -24,9 +24,10 @@ public interface iExerciseTracker {
 	//Entries relating to distance travelled.  Metric is default.
 	public float getDistance();
 	
-	//location finding method.  Returns a null location is gps is not enabled?
+	//location finding method.  Returns a null location if gps is not enabled?
 	public Location getCurrentLocation();
 	
+	//methods which will be called from the main flow.
 	public void startTracker();
 	public void pauseTracker();
 	public void stopTracker();
