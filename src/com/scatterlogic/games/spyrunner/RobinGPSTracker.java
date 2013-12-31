@@ -117,7 +117,10 @@ public class RobinGPSTracker implements iExerciseTracker {
 
 	@Override
 	public long getTimeMillis() {
-		return myLocation.getTime();
+		if(!(myLocation==null))
+			return myLocation.getTime();
+		else
+			return 0;
 	}
 	@Override
 	public String getTimeString() {
@@ -126,7 +129,9 @@ public class RobinGPSTracker implements iExerciseTracker {
 	}
 	@Override
 	public float getSpeed() {
-		return myLocation.getSpeed();
+		if (!(myLocation == null))
+			return myLocation.getSpeed();
+		else return 0;
 	}
 	@Override
 	public float getPace() {
