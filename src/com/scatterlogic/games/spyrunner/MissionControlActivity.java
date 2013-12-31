@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import java.io.*;
+import android.util.*;
 
 public class MissionControlActivity extends Activity {
 	
@@ -26,6 +28,9 @@ public class MissionControlActivity extends Activity {
 	Handler mHandler;
 	private boolean running;
 	
+	//A file to write to...
+	RobinFileWriter thisMission;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,20 +43,22 @@ public class MissionControlActivity extends Activity {
 		stat2 = (TextView) findViewById(R.id.missioncontrolstat2);
 		stat3 = (TextView) findViewById(R.id.missioncontrolstat3);
 		stat4 = (TextView) findViewById(R.id.missioncontrolstat4);
-		feedback = (TextView) findViewById(R.id.missioncontrolstat4);
+		feedback = (TextView) findViewById(R.id.missioncontrolfeedback);
 		
-		stat1.setText("Yo");
-		stat2.setText("Yo too");
-		stat3.setText("Yo three");
-		stat4.setText("Yo four");
+		stat1.setText("Awaits");
+		stat2.setText("Awaits2");
+		stat3.setText("Awaits3");
+		stat4.setText("Awaits4");
 		
+		thisMission = new RobinFileWriter("Mission Logs", "TestMission.txt");
+		if (thisMission.isExternalStorageWritable()) feedback.setText("Writable");
 		missionReview = new Intent(this, ReviewMissionActivity.class);
 		findViewById(R.id.mission_review).setOnClickListener(new OnClickListener() {
 		    public void onClick(View v) {
 		    	startActivity(missionReview);
 		    } 
 		});
-		feedback.setText("Launching thread");
+		//feedback.setText("Launching thread");
 		running = true;
 		mUpdateResults.run();
 	}
@@ -90,9 +97,21 @@ public class MissionControlActivity extends Activity {
 		stat2.setText(mET.getTimeString());
 		stat3.setText("N/A");
 		stat4.setText("N/A");
-		if (mET.getCurrentLocation()==null)
-			feedback.setText("No sats");
-		else
-			feedback.setText(mET.getCurrentLocation().getLatitude() + "");
+		thisMission.Append("Time: " + mET.getTimeString());
+		thisMission.Append("Travelling at: " + mET.getSpeed());
+		thisMission.Append("Travelling at: " + mET.getSpeed());
+		thisMission.Append("Travelling at: " + mET.getSpeed());
+		
+		if (mET.getCurrentLocation()==null){
+			stat4.setText("N/A");
+			thisMission.Append("Location not known at this time");
+		}
+			//feedback.setText("No sats");
+		else{
+			thisMission.Append("Location is " + mET.getCurrentLocation().getLatitude() +
+							   ", " + mET.getCurrentLocation().getLongitude() + 
+							   ", " +mET.getCurrentLocation().getAltitude());
+				feedback.setText(mET.getCurrentLocation().getLatitude() + "");
+			}
 	}
 }
