@@ -26,7 +26,8 @@ public interface iExerciseTracker {
 	
 	//location finding method.  Returns a null location if gps is not enabled?
 	public Location getCurrentLocation();
-	
+	public String getLocationAsString();
+		
 	//methods which will be called from the main flow.
 	public void startTracker();
 	public void pauseTracker();

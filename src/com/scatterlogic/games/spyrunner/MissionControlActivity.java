@@ -12,6 +12,9 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import java.io.*;
 import android.util.*;
+import android.os.PowerManager;
+import android.content.pm.*;
+
 
 public class MissionControlActivity extends Activity {
 	
@@ -22,7 +25,8 @@ public class MissionControlActivity extends Activity {
 	TextView stat1, stat2, stat3, stat4, feedback;
 	
 	//Let's get that exercise tracker to hand
-	iExerciseTracker mET;
+	iExerciseTracker myExerciseTracker;
+	float oldDistance; //A variable to see if the exerecise tracker has updated...
 
 	//and something for the thread to check that the mission is continuing
 	Handler mHandler;
@@ -31,14 +35,28 @@ public class MissionControlActivity extends Activity {
 	//A file to write to...
 	RobinFileWriter thisMission;
 	
+	//a timer object to keep an eye on the clock
+	RobinTimerObject timer;
+
+	//Keep the screen alive
+	PowerManager.WakeLock wl;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		mET = new RobinGPSTracker(this);
-		setContentView(R.layout.activity_mission_control);
-
+		//Set Up Variables
 		mHandler = new Handler();
+		timer = new RobinTimerObject();
+		myExerciseTracker = new RobinGPSTracker(this);
+        PowerManager pm = (PowerManager) getSystemService(this.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Tag");
+		oldDistance = 0;
+		
+		//Set The Screen, lock into portrait
+		setContentView(R.layout.activity_mission_control);
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
 		stat1 = (TextView) findViewById(R.id.missioncontrolstat1);
 		stat2 = (TextView) findViewById(R.id.missioncontrolstat2);
 		stat3 = (TextView) findViewById(R.id.missioncontrolstat3);
@@ -50,15 +68,20 @@ public class MissionControlActivity extends Activity {
 		stat3.setText("Awaits3");
 		stat4.setText("Awaits4");
 		
+		//Launch the file
 		thisMission = new RobinFileWriter("Mission Logs", "TestMission.txt");
-		if (thisMission.isExternalStorageWritable()) feedback.setText("Writable");
+		
+		//*********************This bit is all about launching the Review Mission Screen, It probably won't be a button
 		missionReview = new Intent(this, ReviewMissionActivity.class);
 		findViewById(R.id.mission_review).setOnClickListener(new OnClickListener() {
 		    public void onClick(View v) {
 		    	startActivity(missionReview);
 		    } 
 		});
+		//**************************************************************************************************************
+		
 		//feedback.setText("Launching thread");
+		
 		running = true;
 		mUpdateResults.run();
 	}
@@ -67,20 +90,24 @@ public class MissionControlActivity extends Activity {
 	protected void onResume()
 	{
 		super.onResume();
-		mET.startTracker();
+		myExerciseTracker.startTracker();
+		timer.startTimer();
+		wl.acquire();
 	}
 
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
+		wl.release();
 	}
 
 	@Override
 	protected void onDestroy()
 	{
 		super.onDestroy();
-		mET.stopTracker();
+		myExerciseTracker.stopTracker();
+		timer.stopTimer();
 	}
 	
 	final Runnable mUpdateResults = new Runnable(){
@@ -88,30 +115,23 @@ public class MissionControlActivity extends Activity {
 		public void run(){
 			if (running){
 				updateResults();
-				mHandler.postDelayed(mUpdateResults, 1000);
+				mHandler.postDelayed(mUpdateResults, 100);
 			}
     	}
     };
 	private void updateResults(){
-		stat1.setText(mET.getSpeed() + "");
-		stat2.setText(mET.getTimeString());
-		stat3.setText("N/A");
-		stat4.setText("N/A");
-		thisMission.Append("Time: " + mET.getTimeString());
-		thisMission.Append("Travelling at: " + mET.getSpeed());
-		thisMission.Append("Travelling at: " + mET.getSpeed());
-		thisMission.Append("Travelling at: " + mET.getSpeed());
-		
-		if (mET.getCurrentLocation()==null){
-			stat4.setText("N/A");
-			thisMission.Append("Location not known at this time");
-		}
-			//feedback.setText("No sats");
-		else{
-			thisMission.Append("Location is " + mET.getCurrentLocation().getLatitude() +
-							   ", " + mET.getCurrentLocation().getLongitude() + 
-							   ", " +mET.getCurrentLocation().getAltitude());
-				feedback.setText(mET.getCurrentLocation().getLatitude() + "");
+		stat1.setText(myExerciseTracker.getSpeed() + "km/h");
+		stat2.setText(myExerciseTracker.getDistance()+"km");
+		stat3.setText(myExerciseTracker.getPace()+"mins/km");
+		stat4.setText(timer.getElapsedTimeAsString());
+			
+		if (!(oldDistance == myExerciseTracker.getDistance())){
+			if (myExerciseTracker.getCurrentLocation()==null){
+				//feedback.setText("No sats");
 			}
+			else{
+				feedback.setText(myExerciseTracker.getLocationAsString() + "\n");
+			}
+		}
 	}
 }

@@ -14,8 +14,8 @@ import android.content.*;
 
 //FileWriter: created on 12/06/2013 on train
 //IMPORTANT:  You need to declare the following permissions in the manifest:
-//<uses-permission android:name="WRITE_EXTERNAL_STORAGE" />
-//<uses-permission android:name="READ_EXTERNAL_STORAGE" />
+//<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+//<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 public class RobinFileWriter {
 	File fileToHandle;

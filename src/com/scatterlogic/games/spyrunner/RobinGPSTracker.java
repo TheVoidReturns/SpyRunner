@@ -17,14 +17,15 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
-public class RobinGPSTracker implements iExerciseTracker {
+public class RobinGPSTracker implements iExerciseTracker
+{
 	//objects relating to acquiring fixes and updates
 	LocationManager myLocationManager;
 	LocationListener myLocationListener;
 	
 	//storage of latest location and log of locations
 	Location myLocation;
-	ArrayList <Location> locationsList = new ArrayList <Location>();
+	//ArrayList <Location> locationsList = new ArrayList <Location>();
 	 
 	//this constant is used to change the provider for testing in low GPS areas.
 	//final String provider = LocationManager.NETWORK_PROVIDER;
@@ -48,9 +49,15 @@ public class RobinGPSTracker implements iExerciseTracker {
 			public void onLocationChanged(Location location) {
 				Log.e("Location Listener", "In location changed: " +location.getLongitude() + ", " +
 						location.getLatitude() + ", " + location.getAltitude());
-				locationsList.add(myLocation);
-				myLocation = location;
-				if (locationsList.size() > 10) locationsList.remove(0);
+				if (running){
+					if (myLocation == null){
+						myLocation = location;
+					}
+					else{
+						distance += myLocation.distanceTo(location);
+						myLocation = location;
+						}
+				}
 			}
 
 			@Override
@@ -80,6 +87,7 @@ public class RobinGPSTracker implements iExerciseTracker {
 		}
 	}
 	public void pauseTracker(){
+		myLocation = null;
 		running = false;
 	}
 	public void stopTracker(){
@@ -98,13 +106,20 @@ public class RobinGPSTracker implements iExerciseTracker {
 	//not used in latest implementation
 	public String coordinatesAsString(){
 		if (!(myLocation==null))
-		return myLocation.getLatitude() + ", " + 
+		return "[" + myLocation.getLatitude() + ", " + 
 				myLocation.getLongitude() + ", " +
-				myLocation.getAltitude() + ", " +
-				myLocation.getTime() 	 + " (" +
+				myLocation.getAltitude() + "], " +
+				this.getTimeString() 	 + " (" +
 				myLocation.getAccuracy() + ")";
 		else return "Acquiring... " + ((System.currentTimeMillis()-startTime)/1000);
 	}
+
+	@Override
+	public String getLocationAsString()
+	{
+		return coordinatesAsString();
+	}
+	
 	public String coordinatesAsString(Location inLocation){
 		if (!(inLocation==null))
 			return inLocation.getLatitude() + ", " + 
@@ -135,12 +150,10 @@ public class RobinGPSTracker implements iExerciseTracker {
 	}
 	@Override
 	public float getPace() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 60/getSpeed();
 	}
 	@Override
-	public float getDistance() {
-		// TODO Auto-generated method stub
-		return 0;
+	public synchronized float getDistance() {
+		return distance/1000;
 	}
 }
