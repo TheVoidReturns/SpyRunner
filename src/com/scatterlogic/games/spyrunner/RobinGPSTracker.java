@@ -25,7 +25,7 @@ public class RobinGPSTracker implements iExerciseTracker
 	
 	//storage of latest location and log of locations
 	Location myLocation;
-	//ArrayList <Location> locationsList = new ArrayList <Location>();
+	ArrayList <Location> locationsList = new ArrayList <Location>();
 	 
 	//this constant is used to change the provider for testing in low GPS areas.
 	//final String provider = LocationManager.NETWORK_PROVIDER;
@@ -58,6 +58,7 @@ public class RobinGPSTracker implements iExerciseTracker
 						myLocation = location;
 						}
 				}
+				locationsList.add(location);
 			}
 
 			@Override

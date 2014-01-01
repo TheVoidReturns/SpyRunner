@@ -15,7 +15,6 @@ import android.util.*;
 import android.os.PowerManager;
 import android.content.pm.*;
 
-
 public class MissionControlActivity extends Activity {
 	
 	// This/These intent(s) will be used to transist to new activities from here...
@@ -26,8 +25,14 @@ public class MissionControlActivity extends Activity {
 	
 	//Let's get that exercise tracker to hand
 	iExerciseTracker myExerciseTracker;
-	float oldDistance; //A variable to see if the exerecise tracker has updated...
+	float oldDistance; //A variable to see if the exercise tracker has updated...
 
+	//and some thread variables to make the continuous loop clearer
+	long elapsedTime;
+	int targetHRZone;
+	int currentHRZone;
+	int periodsOfFail;
+	
 	//and something for the thread to check that the mission is continuing
 	Handler mHandler;
 	private boolean running;
@@ -40,7 +45,7 @@ public class MissionControlActivity extends Activity {
 
 	//Keep the screen alive
 	PowerManager.WakeLock wl;
-	
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -100,6 +105,8 @@ public class MissionControlActivity extends Activity {
 	{
 		super.onPause();
 		wl.release();
+		thisMission.Append(myExerciseTracker.getDistance() + "km finished in " +
+				timer.getElapsedTimeAsString());
 	}
 
 	@Override
@@ -114,12 +121,13 @@ public class MissionControlActivity extends Activity {
 
 		public void run(){
 			if (running){
-				updateResults();
-				mHandler.postDelayed(mUpdateResults, 100);
+				
+				updateScreenFields();
+				mHandler.postDelayed(mUpdateResults, 500);
 			}
     	}
     };
-	private void updateResults(){
+	private void updateScreenFields(){
 		stat1.setText(myExerciseTracker.getSpeed() + "km/h");
 		stat2.setText(myExerciseTracker.getDistance()+"km");
 		stat3.setText(myExerciseTracker.getPace()+"mins/km");
