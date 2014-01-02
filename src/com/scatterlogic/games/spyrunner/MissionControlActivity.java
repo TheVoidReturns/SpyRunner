@@ -20,6 +20,7 @@ public class MissionControlActivity extends Activity {
 	
 	// This/These intent(s) will be used to transist to new activities from here...
 	Intent missionReview;
+	Intent musicServiceIntent;
 	
 	// We'll have four TextViews for the stats, and one for the feedback
 	TextView stat1, stat2, stat3, stat4, feedback;
@@ -71,6 +72,8 @@ public class MissionControlActivity extends Activity {
         
         //Create music player object
         musicPlayer = new MusicPlayer();
+        musicServiceIntent = new Intent(this, MusicPlayer.class);
+        startService(musicServiceIntent);
         		
         //This is used for music testing
         songTest = (TextView) findViewById(R.id.song_test);
@@ -82,7 +85,13 @@ public class MissionControlActivity extends Activity {
 		feedback = (TextView) findViewById(R.id.missioncontrolfeedback);
 		
 		//This is used for music testing
-		//songTest.setText(musicPlayer.songTitles.get(1));
+		try {
+			
+			//songTest.setText(musicPlayer.songTitles.get(201));
+		}
+		finally {
+			songTest.setText("Song Load Fail");
+		}
 		
 		stat1.setText("Awaits");
 		stat2.setText("Awaits2");

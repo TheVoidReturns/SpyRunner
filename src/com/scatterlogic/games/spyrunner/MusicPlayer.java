@@ -1,5 +1,6 @@
 package com.scatterlogic.games.spyrunner;
 import java.io.IOException;
+import android.util.Log;
 import java.util.ArrayList;
 
 import android.app.Notification;
@@ -25,15 +26,23 @@ public class MusicPlayer extends Service implements MediaPlayer.OnPreparedListen
 	boolean isPrepared = false;
 	boolean isPlaying = false;
     MediaPlayer musicPlayer = null;
+    Uri contentUri;
 //    private static final String ACTION_PLAY = "com.example.action.PLAY";
     String songName = "Test Songname";
     int notification_id = 1234;
-    ContentResolver contentResolver;
     
     ArrayList<String> songTitles  = new  ArrayList<String>();
     ArrayList<Long> songIds  = new  ArrayList<Long>();
     int numSongs;
-        
+    boolean cursorError;
+    /*
+    public void onCreate() {
+    	musicPlayer.setOnErrorListener(this);
+    	musicPlayer.setOnPreparedListener(this);
+    	musicPlayer.reset();
+
+    }
+        */
     @SuppressWarnings("deprecation")
 	@Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -41,23 +50,50 @@ public class MusicPlayer extends Service implements MediaPlayer.OnPreparedListen
         	musicPlayer = new MediaPlayer();
         	musicPlayer.setOnPreparedListener(this);
         	musicPlayer.setOnErrorListener(this);
-        	musicPlayer.prepareAsync(); // prepare asynchronously to not block main thread (could take a while to initialise)
-        	musicPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-        	contentResolver = getContentResolver(); //Used for reading the the user's music
-        	
-            //Need to run as a foreground status, with an entry in the notification bar and a way for the user to use that notification to
-            //open the Mission Control activity      
-        	 PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-        	                 new Intent(getApplicationContext(), MissionControlActivity.class),
-        	                 PendingIntent.FLAG_UPDATE_CURRENT);
-        	 Notification notification = new Notification();
-        	 notification.tickerText = "Hello Hello Hello!";
-        	 notification.icon = R.drawable.robin8bit;
-        	 notification.flags |= Notification.FLAG_ONGOING_EVENT;
-        	 //This method is deprecated but am using for this first implementation
-        	 notification.setLatestEventInfo(getApplicationContext(), "MusicPlayerSample",
-        	                 "Playing: " + songName, pi);
-        	 startForeground(notification_id, notification);
+        	getUserMusic();
+        	Log.d("MusicPlayer" , "gotusermusic");
+        	Log.d("MusicPlayer", songTitles.get(0));
+
+        	//Test song
+        	if(cursorError !=true) {
+	        	musicPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+	        	contentUri = ContentUris.withAppendedId(
+	        	        android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songIds.get(201));
+	        	try {
+					musicPlayer.setDataSource(getApplicationContext(), contentUri);
+					Log.e("MusicPlayer", "Data Source is set");
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        	
+	        	
+	        	musicPlayer.prepareAsync(); // prepare asynchronously to not block main thread (could take a while to initialise)
+	        	musicPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+	        	
+	            //Need to run as a foreground status, with an entry in the notification bar and a way for the user to use that notification to
+	            //open the Mission Control activity      
+	        	 PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+	        	                 new Intent(getApplicationContext(), MissionControlActivity.class),
+	        	                 PendingIntent.FLAG_UPDATE_CURRENT);
+	        	 Notification notification = new Notification();
+	        	 notification.tickerText = "Hello Hello Hello!";
+	        	 notification.icon = R.drawable.robin8bit;
+	        	 notification.flags |= Notification.FLAG_ONGOING_EVENT;
+	        	 //This method is deprecated but am using for this first implementation
+	        	 notification.setLatestEventInfo(getApplicationContext(), "MusicPlayerSample",
+	        	                 "Playing: " + songName, pi);
+	        	 startForeground(notification_id, notification);
+        	}
         	         	 
 //        }
         //Fudge
@@ -67,11 +103,7 @@ public class MusicPlayer extends Service implements MediaPlayer.OnPreparedListen
     /** Called when MediaPlayer is ready */
     public void onPrepared(MediaPlayer player) {
     	this.isPrepared = true;
-    	
-    	//Populate the song arrays
-   	 	getUserMusic();
         player.start();
-        
     }
     
     public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -91,8 +123,18 @@ public class MusicPlayer extends Service implements MediaPlayer.OnPreparedListen
     }
     
     public void getUserMusic() {
+    	ContentResolver contentResolver = getContentResolver();
     	Uri uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-    	Cursor cursor = contentResolver.query(uri, null, null, null, null);
+    	Log.d("MusicPlayer" , "uri");
+    	Cursor cursor = null;
+    	try{
+    		cursor = contentResolver.query(uri, null, null, null, null);
+    		cursorError = false;
+    	}
+    	finally{
+    		cursorError = true;
+    	}
+    	Log.d("MusicPlayer" , "cursor");
     	if (cursor == null) {
     	    // query failed, handle error.
     	} else if (!cursor.moveToFirst()) {
@@ -105,6 +147,10 @@ public class MusicPlayer extends Service implements MediaPlayer.OnPreparedListen
     	       songTitles.add(cursor.getString(titleColumn));
     	    } while (cursor.moveToNext());
     	    numSongs = songIds.size();
+    	    String songID1test = songIds.get(201).toString();
+    	    String songTitleTest = songTitles.get(201);
+    	    Log.d("MusicPlayer", songID1test);
+    	    Log.d("MusicPlayer", songTitleTest);
     	}
     	
     }
@@ -123,7 +169,7 @@ public class MusicPlayer extends Service implements MediaPlayer.OnPreparedListen
 	
 	public void playSong() {
 		long id = (long)songIds.get(1);
-		Uri contentUri = ContentUris.withAppendedId(
+		contentUri = ContentUris.withAppendedId(
 		        android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
 
 		musicPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
