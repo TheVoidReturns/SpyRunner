@@ -64,11 +64,24 @@
 			android:singleLine="false"/>
 
 		<Button
-			android:id="@+id/mission_review"
-			android:gravity="center"
-			android:layout_centerInParent="true"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"/>
+		    android:id="@+id/mission_review"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_above="@+id/missioncontrolstat1"
+		    android:layout_centerHorizontal="true"
+		    android:layout_marginBottom="18dp"
+		    android:gravity="center" />
+
+		<TextView
+		    android:id="@+id/song_test"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/missioncontrolfeedback"
+		    android:layout_marginTop="20dp"
+		    android:text="Large Text"
+		    android:textAppearance="?android:attr/textAppearanceLarge"
+		    android:textColor="#FFFFFF" />
 
 	</RelativeLayout>
 

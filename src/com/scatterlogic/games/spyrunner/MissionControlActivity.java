@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ListView;
 import android.widget.TextView;
 import java.io.*;
 import android.util.*;
@@ -22,6 +23,9 @@ public class MissionControlActivity extends Activity {
 	
 	// We'll have four TextViews for the stats, and one for the feedback
 	TextView stat1, stat2, stat3, stat4, feedback;
+	
+	//Test Song Read
+	TextView songTest;
 	
 	//Let's get that exercise tracker to hand
 	iExerciseTracker myExerciseTracker;
@@ -45,6 +49,9 @@ public class MissionControlActivity extends Activity {
 
 	//Keep the screen alive
 	PowerManager.WakeLock wl;
+	
+	//Music player object
+	MusicPlayer musicPlayer;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,18 +68,28 @@ public class MissionControlActivity extends Activity {
 		//Set The Screen, lock into portrait
 		setContentView(R.layout.activity_mission_control);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		
+        
+        //Create music player object
+        musicPlayer = new MusicPlayer();
+        		
+        //This is used for music testing
+        songTest = (TextView) findViewById(R.id.song_test);
+        
 		stat1 = (TextView) findViewById(R.id.missioncontrolstat1);
 		stat2 = (TextView) findViewById(R.id.missioncontrolstat2);
 		stat3 = (TextView) findViewById(R.id.missioncontrolstat3);
 		stat4 = (TextView) findViewById(R.id.missioncontrolstat4);
 		feedback = (TextView) findViewById(R.id.missioncontrolfeedback);
 		
+		//This is used for music testing
+		//songTest.setText(musicPlayer.songTitles.get(1));
+		
 		stat1.setText("Awaits");
 		stat2.setText("Awaits2");
 		stat3.setText("Awaits3");
 		stat4.setText("Awaits4");
 		
+
 		//Launch the file
 		thisMission = new RobinFileWriter("Mission Logs", "TestMission.txt");
 		
