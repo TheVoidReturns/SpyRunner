@@ -33,8 +33,9 @@ public class MusicPlayer {
 	UserMusic userMusic;
 	Context context;
 	Random random;
-	int randomSong; 
+	int currentSong; 
 	boolean isPrepared = false;
+	String currentSongTitle;
 	
  
 	public MusicPlayer(Context context) {
@@ -43,7 +44,8 @@ public class MusicPlayer {
 		userMusic = new UserMusic(context);
 		currentState = State.IDLE;
 		random = new Random();
-		randomSong = random.nextInt(userMusic.numSongs);
+		currentSong = random.nextInt(userMusic.numSongs);
+		currentSongTitle = userMusic.songTitles.get(currentSong);
 		mPlayer.setOnPreparedListener(mOnPreparedListener);
 		mPlayer.setOnCompletionListener(mOnCompletionListener);
 		mPlayer.setOnBufferingUpdateListener(mOnBufferingUpdateListener);
@@ -53,7 +55,7 @@ public class MusicPlayer {
 		
 		
 		try {
-			mPlayer.setDataSource(context, userMusic.songUris.get(randomSong));
+			mPlayer.setDataSource(context, userMusic.songUris.get(currentSong));
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

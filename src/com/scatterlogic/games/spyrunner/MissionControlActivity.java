@@ -87,9 +87,9 @@ public class MissionControlActivity extends Activity {
 		feedback = (TextView) findViewById(R.id.missioncontrolfeedback);
 		
 		//This is used for music testing
-		//while (musicPlayer.isPrepared = false) {
+		//while (musicPlayer.isPrepared == false) {
 			try {
-				songTest.setText(musicPlayer.userMusic.songTitles.get(musicPlayer.randomSong));
+				songTest.setText(musicPlayer.currentSongTitle);
 			}
 			finally {
 				songTest.setText("Song title not read");
