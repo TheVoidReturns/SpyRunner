@@ -89,7 +89,7 @@ public class MissionControlActivity extends Activity {
 		//This is used for music testing
 		try {
 			
-			//songTest.setText(musicPlayer.songTitles.get(201));
+			songTest.setText(musicPlayer.userMusic.songTitles.get(musicPlayer.randomSong));
 		}
 		finally {
 			songTest.setText("Song Load Fail");

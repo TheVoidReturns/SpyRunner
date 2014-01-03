@@ -1,5 +1,6 @@
 package com.scatterlogic.games.spyrunner;
 import android.content.Context;
+import java.util.Random;
 import android.media.MediaPlayer;
 import java.io.IOException;
 import java.util.EnumSet;
@@ -31,18 +32,40 @@ public class MusicPlayer {
 	private MusicPlayer musicPlayer;
 	UserMusic userMusic;
 	Context context;
+	Random random;
+	int randomSong; 
+	
  
 	public MusicPlayer(Context context) {
 		musicPlayer = this;
 		mPlayer = new MediaPlayer();
 		userMusic = new UserMusic(context);
 		currentState = State.IDLE;
+		random = new Random();
+		randomSong = random.nextInt(userMusic.numSongs);
 		mPlayer.setOnPreparedListener(mOnPreparedListener);
 		mPlayer.setOnCompletionListener(mOnCompletionListener);
 		mPlayer.setOnBufferingUpdateListener(mOnBufferingUpdateListener);
 		mPlayer.setOnErrorListener(mOnErrorListener);
 		mPlayer.setOnInfoListener(mOnInfoListener);
 		mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		
+		
+		try {
+			mPlayer.setDataSource(context, userMusic.songUris.get(randomSong));
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Log.d("MusicPlayer", "MusicPlayer Instantiated");
 	}
  
@@ -68,11 +91,12 @@ public class MusicPlayer {
  
 	public void prepareAsync() {
 		Log.d(tag, "prepareAsync() New2");
-		//if (EnumSet.of(State.INITIALIZED, State.STOPPED).contains(currentState)) {
-			//mPlayer.prepareAsync();
+//		if (EnumSet.of(State.INITIALIZED, State.STOPPED).contains(currentState)) {
+			mPlayer.prepareAsync();
 			currentState = State.PREPARING;
-		//} else throw new RuntimeException();
+//		} else throw new RuntimeException();
 		Log.d(tag, "prepared Async()"); 
+		Log.d(tag, userMusic.songTitles.get(201));
 	}
  
 	public boolean isPlaying() {
