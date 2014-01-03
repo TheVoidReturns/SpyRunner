@@ -34,6 +34,7 @@ public class MusicPlayer {
 	Context context;
 	Random random;
 	int randomSong; 
+	boolean isPrepared = false;
 	
  
 	public MusicPlayer(Context context) {
@@ -163,6 +164,7 @@ public class MusicPlayer {
 		@Override
 		public void onPrepared(MediaPlayer mp) {
 			Log.d(tag, "on prepared");
+			isPrepared = true;
 			currentState = State.PREPARED;
 			musicPlayer.onPrepared(mp);
 			mPlayer.start();

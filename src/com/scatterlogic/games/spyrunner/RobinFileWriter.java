@@ -26,13 +26,13 @@ public class RobinFileWriter {
 			this.directory = new File(Environment.getExternalStorageDirectory()+"/"+directory);
 			//this.directory = new File("/mnt/sdcard/Leia");
 
-			Log.e("FileWriter", "Trying: " + this.directory.getAbsolutePath());
+			Log.d("FileWriter", "Trying: " + this.directory.getAbsolutePath());
 		}
 		if (!this.directory.mkdirs())
 		{
-			Log.e("FileWriter", "Unable to create directory");
+			Log.d("FileWriter", "Unable to create directory");
 		}
-		else Log.e("FileWriter", "Directory created");
+		else Log.d("FileWriter", "Directory created");
 		fileToHandle = new File(this.directory, fileName);
 	}
 	public boolean Append(String stringToAppend)
@@ -46,7 +46,7 @@ public class RobinFileWriter {
 			pw.flush();
 			pw.close();
 			f.close();
-			//Log.e("FileWriter", "Wrote " + stringToAppend);
+			//Log.d("FileWriter", "Wrote " + stringToAppend);
 		}
 		catch (FileNotFoundException e)
 		{
@@ -59,7 +59,7 @@ public class RobinFileWriter {
 			e.printStackTrace();
 			return false;
 		}
-		Log.e("FileWriter", "Written: \n" + stringToAppend);
+		Log.d("FileWriter", "Written: \n" + stringToAppend);
 		return true;
 	}
 	
@@ -83,10 +83,10 @@ public class RobinFileWriter {
 	public boolean isExternalStorageWritable() {
 	    String state = Environment.getExternalStorageState();
 	    if (Environment.MEDIA_MOUNTED.equals(state)) {
-	    	Log.e("FileWriter", "External Writable");
+	    	Log.d("FileWriter", "External Writable");
 	    	return true;
 	    }
-	    Log.e("FileWriter", "External Not Writable");
+	    Log.d("FileWriter", "External Not Writable");
 	    return false;
 	}
 
@@ -95,10 +95,10 @@ public class RobinFileWriter {
 	    String state = Environment.getExternalStorageState();
 	    if (Environment.MEDIA_MOUNTED.equals(state) ||
 	        Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-	        Log.e("FileWriter", "External Readable");
+	        Log.d("FileWriter", "External Readable");
 	    	return true;
 	    }
-	    Log.e("FileWriter", "External Not Readable");
+	    Log.d("FileWriter", "External Not Readable");
 	    return false;
 	}
 	public String tellMeAboutYourself(){
