@@ -23,7 +23,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <service android:name=".MusicPlayer" android:enabled="true"></service>
+        <service android:name=".MusicPlayerOld" android:enabled="true"></service>
         <activity
             android:name="com.scatterlogic.games.spyrunner.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

@@ -16,6 +16,7 @@ import android.util.*;
 import android.os.PowerManager;
 import android.content.pm.*;
 
+
 public class MissionControlActivity extends Activity {
 	
 	// This/These intent(s) will be used to transist to new activities from here...
@@ -70,11 +71,12 @@ public class MissionControlActivity extends Activity {
 		setContentView(R.layout.activity_mission_control);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         
-        //Create music player object
-        musicPlayer = new MusicPlayer();
-        musicServiceIntent = new Intent(this, MusicPlayer.class);
-        startService(musicServiceIntent);
-        		
+        //Create music player object     	
+        musicPlayer = new MusicPlayer(getApplicationContext());
+        
+        //Prepare the music player in a separate thread
+        musicPlayer.prepareAsync();
+        
         //This is used for music testing
         songTest = (TextView) findViewById(R.id.song_test);
         
