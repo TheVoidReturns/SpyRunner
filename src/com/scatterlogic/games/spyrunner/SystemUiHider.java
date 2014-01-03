@@ -1,4 +1,4 @@
-package com.scatterlogic.games.spyrunner.util;
+package com.scatterlogic.games.spyrunner;
 
 import android.app.Activity;
 import android.os.Build;

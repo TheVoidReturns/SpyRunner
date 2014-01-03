@@ -1,4 +1,4 @@
-package com.scatterlogic.games.spyrunner.util;
+package com.scatterlogic.games.spyrunner;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

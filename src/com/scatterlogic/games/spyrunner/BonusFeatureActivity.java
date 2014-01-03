@@ -1,6 +1,5 @@
 package com.scatterlogic.games.spyrunner;
 
-import com.scatterlogic.games.spyrunner.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
