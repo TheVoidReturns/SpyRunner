@@ -52,8 +52,9 @@ public class UserMusic implements Runnable {
     	       songTitles.add(cursor.getString(titleColumn));
     	    } while (cursor.moveToNext());
     	    numSongs = songUris.size();
-    	    Log.d("MusicPlayer", songIds.get(201).toString());
-    	    Log.d("MusicPlayer", songTitles.get(201));
+    	    //Silly logs!  What if I don't have 201 songs?
+    	    //Log.d("MusicPlayer", songIds.get(201).toString());
+    	    //Log.d("MusicPlayer", songTitles.get(201));
     	}
 		
 	}

@@ -98,8 +98,10 @@ public class MusicPlayer {
 			mPlayer.prepareAsync();
 			currentState = State.PREPARING;
 //		} else throw new RuntimeException();
+		
+		//And another crash for the 201 songs error	
 		Log.d(tag, "prepared Async()"); 
-		Log.d(tag, userMusic.songTitles.get(201));
+		//Log.d(tag, userMusic.songTitles.get(201));
 	}
  
 	public boolean isPlaying() {

@@ -31,10 +31,13 @@ public class MissionControlActivity extends Activity {
 	
 	//Let's get that exercise tracker to hand
 	iExerciseTracker myExerciseTracker;
+	iHeartRateZoneFinder myHeartRateZoneFinder;
 	float oldDistance; //A variable to see if the exercise tracker has updated...
 
 	//and some thread variables to make the continuous loop clearer
 	long elapsedTime;
+	float currentSpeed;
+	double altitudeGain;
 	int targetHRZone;
 	int currentHRZone;
 	int periodsOfFail;
@@ -63,6 +66,11 @@ public class MissionControlActivity extends Activity {
 		mHandler = new Handler();
 		timer = new RobinTimerObject();
 		myExerciseTracker = new RobinGPSTracker(this);
+		
+		//The lines below will eventually be calculated, and will need to have either a file or
+		//list of values passed...  The list of values is km/h, but may eventually contain altitude factors...
+		myHeartRateZoneFinder = new HeartRateFromSpeed(11,10,9,8,7);
+		
         PowerManager pm = (PowerManager) getSystemService(this.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Tag");
 		oldDistance = 0;
@@ -114,8 +122,6 @@ public class MissionControlActivity extends Activity {
 		});
 		//**************************************************************************************************************
 		
-		//feedback.setText("Launching thread");
-		
 		running = true;
 		mUpdateResults.run();
 	}
@@ -146,11 +152,28 @@ public class MissionControlActivity extends Activity {
 		timer.stopTimer();
 	}
 	
+	//Here is the looping thread, set to re-launch itself every half second at the moment...
+	
 	final Runnable mUpdateResults = new Runnable(){
 
+		//this "run" section is the main loop, and will call each of the facets of the exercise
+		//tracker
 		public void run(){
 			if (running){
+				//update the timer
+				elapsedTime = timer.getElapsedTimeAsLong();
 				
+				//obtain the current speed and altitude gain
+				currentSpeed = myExerciseTracker.getSpeed();
+				altitudeGain = myExerciseTracker.getAltitudeGain();
+				
+				//which then translates as a heart zone (in the absence of an HR monitor)
+				currentHRZone = myHeartRateZoneFinder.getHeartRateZone(currentSpeed, altitudeGain);
+				
+				//A method to be written...
+				missionReact();
+				
+				//And update the text fields
 				updateScreenFields();
 				mHandler.postDelayed(mUpdateResults, 500);
 			}
@@ -167,8 +190,12 @@ public class MissionControlActivity extends Activity {
 				//feedback.setText("No sats");
 			}
 			else{
-				feedback.setText(myExerciseTracker.getLocationAsString() + "\n");
+				//feedback.setText(myExerciseTracker.getLocationAsString() + "\n");
 			}
 		}
+	}
+	//this is the method which decides if any audio feedback or log information is needed
+	private void missionReact(){
+		feedback.setText("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime);
 	}
 }

@@ -1,10 +1,12 @@
 package com.scatterlogic.games.spyrunner;
 
+import java.util.ArrayList;
+
 import android.location.Location;
 
 
 //A group of activities to track progress within an exercise regime
-//currently split between cadence sensing and gpd tracking
+//currently split between cadence sensing and gps tracking
 public interface iExerciseTracker {
 	
 	//a boolean which declares if this particular method is viable
@@ -20,6 +22,7 @@ public interface iExerciseTracker {
 	//Entries relating to Speed.  Metric is default.
 	public float getSpeed();
 	public float getPace();
+	public double getAltitudeGain();
 	
 	//Entries relating to distance travelled.  Metric is default.
 	public float getDistance();
@@ -27,7 +30,7 @@ public interface iExerciseTracker {
 	//location finding method.  Returns a null location if gps is not enabled?
 	public Location getCurrentLocation();
 	public String getLocationAsString();
-		
+	
 	//methods which will be called from the main flow.
 	public void startTracker();
 	public void pauseTracker();
