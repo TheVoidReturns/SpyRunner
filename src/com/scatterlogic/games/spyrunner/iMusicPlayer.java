@@ -14,6 +14,10 @@ public interface iMusicPlayer {
 	void skip();
 	void restart();
 	
+	//A reduction in volume for voice feedback and mission events
+	void shhh();
+	void returnToOriginalVolume();
+	
 	void playSong(float targetSpeed);
 	
 	//this will receive speeds from the exerciseTracker via mission control, and

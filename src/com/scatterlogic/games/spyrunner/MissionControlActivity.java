@@ -12,12 +12,15 @@ import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.io.*;
+import java.util.Locale;
+
 import android.util.*;
 import android.os.PowerManager;
 import android.content.pm.*;
+import android.speech.tts.*;
+import android.speech.tts.TextToSpeech.OnInitListener;
 
-
-public class MissionControlActivity extends Activity {
+public class MissionControlActivity extends Activity implements OnInitListener {
 	
 	// This/These intent(s) will be used to transist to new activities from here...
 	Intent missionReview;
@@ -40,6 +43,7 @@ public class MissionControlActivity extends Activity {
 	double altitudeGain;
 	int targetHRZone;
 	int currentHRZone;
+	int mileStonesPassed;
 	int periodsOfFail;
 	
 	//and something for the thread to check that the mission is continuing
@@ -51,7 +55,10 @@ public class MissionControlActivity extends Activity {
 	
 	//a timer object to keep an eye on the clock
 	RobinTimerObject timer;
-
+	
+	//A speech thing
+	TextToSpeech voiceFeedback;
+	
 	//Keep the screen alive
 	PowerManager.WakeLock wl;
 	
@@ -66,6 +73,7 @@ public class MissionControlActivity extends Activity {
 		mHandler = new Handler();
 		timer = new RobinTimerObject();
 		myExerciseTracker = new RobinGPSTracker(this);
+		mileStonesPassed = 0;
 		
 		//The lines below will eventually be calculated, and will need to have either a file or
 		//list of values passed...  The list of values is km/h, but may eventually contain altitude factors...
@@ -93,6 +101,7 @@ public class MissionControlActivity extends Activity {
 		stat3 = (TextView) findViewById(R.id.missioncontrolstat3);
 		stat4 = (TextView) findViewById(R.id.missioncontrolstat4);
 		feedback = (TextView) findViewById(R.id.missioncontrolfeedback);
+		voiceFeedback = new TextToSpeech(this,this);
 		
 		//This is used for music testing
 		//while (musicPlayer.isPrepared == false) {
@@ -196,6 +205,40 @@ public class MissionControlActivity extends Activity {
 	}
 	//this is the method which decides if any audio feedback or log information is needed
 	private void missionReact(){
-		feedback.setText("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime);
+		Log.d("MissionControl", "At Milestone " + mileStonesPassed);
+		//feedback.setText("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime);
+		if (mileStonesPassed < 1){
+			voiceFeedback.speak
+				("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime,
+					TextToSpeech.QUEUE_FLUSH, null);
+		}
+		if (mileStonesPassed%50==0){
+			voiceFeedback.speak
+				("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime,
+					TextToSpeech.QUEUE_FLUSH, null);
+		}
+		mileStonesPassed++;
+	}
+
+	@Override
+	public void onInit(int status) {
+
+        if (status == TextToSpeech.SUCCESS) {
+ 
+            int result = voiceFeedback.setLanguage(Locale.ENGLISH);
+ 
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+                feedback.setText("This Language is not supported");
+            } else {
+                feedback.setText("Speech enabled");
+                voiceFeedback.setSpeechRate((float) 0.8);
+            }
+ 
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+		
 	}
 }
