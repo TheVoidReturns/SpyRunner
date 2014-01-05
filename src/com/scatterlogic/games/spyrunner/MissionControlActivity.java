@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ImageButton;
 import java.io.*;
 import java.util.Locale;
 
@@ -21,13 +22,14 @@ import android.speech.tts.*;
 import android.speech.tts.TextToSpeech.OnInitListener;
 
 public class MissionControlActivity extends Activity implements OnInitListener {
-	
+
 	// This/These intent(s) will be used to transist to new activities from here...
 	Intent missionReview;
 	Intent musicServiceIntent;
 	
 	// We'll have four TextViews for the stats, and one for the feedback
 	TextView stat1, stat2, stat3, stat4, feedback;
+	ImageButton musicPlay, musicPause, musicPrevious, musicNext;
 	
 	//Test Song Read
 	TextView songTest;
@@ -45,6 +47,7 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 	int currentHRZone;
 	int mileStonesPassed;
 	int periodsOfFail;
+	String songTitle;
 	
 	//and something for the thread to check that the mission is continuing
 	Handler mHandler;
@@ -103,10 +106,39 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 		feedback = (TextView) findViewById(R.id.missioncontrolfeedback);
 		voiceFeedback = new TextToSpeech(this,this);
 		
+		musicPlay = (ImageButton) findViewById(R.id.music_play);
+		musicPause = (ImageButton) findViewById(R.id.music_pause);
+		musicPrevious = (ImageButton) findViewById(R.id.music_previous);
+		musicNext = (ImageButton) findViewById(R.id.music_next);
+		
+		
+		//Set click listeners
+		musicPlay.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                musicPlayer.play();
+                
+            }
+        });
+		musicPause.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                musicPlayer.pause();
+            }
+        });
+		musicPrevious.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	musicPlayer.previous();
+            }
+        });
+		musicNext.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                musicPlayer.next();
+            }
+        });
+		
 		//This is used for music testing
 		//while (musicPlayer.isPrepared == false) {
 			try {
-				songTest.setText(musicPlayer.currentSongTitle);
+				//songTest.setText(musicPlayer.getCurrentSongTitle());
 			}
 			finally {
 				songTest.setText("Song title not read");
@@ -118,10 +150,9 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 		stat3.setText("Awaits3");
 		stat4.setText("Awaits4");
 		
-
 		//Launch the file
 		thisMission = new RobinFileWriter("Mission Logs", "TestMission.txt");
-		
+
 		//*********************This bit is all about launching the Review Mission Screen, It probably won't be a button
 		missionReview = new Intent(this, ReviewMissionActivity.class);
 		findViewById(R.id.mission_review).setOnClickListener(new OnClickListener() {
@@ -171,13 +202,16 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 			if (running){
 				//update the timer
 				elapsedTime = timer.getElapsedTimeAsLong();
-				
+								
 				//obtain the current speed and altitude gain
 				currentSpeed = myExerciseTracker.getSpeed();
 				altitudeGain = myExerciseTracker.getAltitudeGain();
 				
 				//which then translates as a heart zone (in the absence of an HR monitor)
 				currentHRZone = myHeartRateZoneFinder.getHeartRateZone(currentSpeed, altitudeGain);
+				
+				//Current song title
+				songTitle = musicPlayer.getCurrentSongTitle();
 				
 				//A method to be written...
 				missionReact();
@@ -193,6 +227,9 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 		stat2.setText(myExerciseTracker.getDistance()+"km");
 		stat3.setText(myExerciseTracker.getPace()+"mins/km");
 		stat4.setText(timer.getElapsedTimeAsString());
+		
+		//Read song title
+		songTest.setText(songTitle);
 			
 		if (!(oldDistance == myExerciseTracker.getDistance())){
 			if (myExerciseTracker.getCurrentLocation()==null){
@@ -205,7 +242,7 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 	}
 	//this is the method which decides if any audio feedback or log information is needed
 	private void missionReact(){
-		Log.d("MissionControl", "At Milestone " + mileStonesPassed);
+		//Log.d("MissionControl", "At Milestone " + mileStonesPassed);
 		//feedback.setText("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime);
 		if (mileStonesPassed < 1){
 			voiceFeedback.speak

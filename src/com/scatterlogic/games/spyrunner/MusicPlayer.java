@@ -1,5 +1,7 @@
 package com.scatterlogic.games.spyrunner;
 import android.content.Context;
+
+import java.util.ArrayList;
 import java.util.Random;
 import android.media.MediaPlayer;
 import java.io.IOException;
@@ -21,7 +23,8 @@ import android.util.Log;
  * {@link MediaPlayerWrapper#getState()} accessor. Most of the frequently used methods are available, but some still
  * need adding.
  * </p>
- * Media Player Wrapper by Daniel Hawkes. Added to by Chris Peel
+ * Media Player State Wrapper by Daniel Hawkes. 
+ * Rest of the class by Chris Peel
  */
 
 public class MusicPlayer {
@@ -33,54 +36,42 @@ public class MusicPlayer {
 	UserMusic userMusic;
 	Context context;
 	Random random;
-	int currentSong; 
 	boolean isPrepared = false;
-	String currentSongTitle;
+	ArrayList<Integer> playHistoryIndex  = new  ArrayList<Integer>();
+	int currentSongIndex;
+	int historyIndex = 0; //Need to know where in the play history we are so user can skip back and forth consistently
 	
- 
-	public MusicPlayer(Context context) {
+	public MusicPlayer(Context mcontext) {
+		context = mcontext;
+
 		musicPlayer = this;
 		mPlayer = new MediaPlayer();
 		userMusic = new UserMusic(context);
 		currentState = State.IDLE;
 		random = new Random();
-		currentSong = random.nextInt(userMusic.numSongs);
-		currentSongTitle = userMusic.songTitles.get(currentSong);
+		currentSongIndex = random.nextInt(userMusic.numSongs);
+		playHistoryIndex.add(currentSongIndex);
+		
 		mPlayer.setOnPreparedListener(mOnPreparedListener);
 		mPlayer.setOnCompletionListener(mOnCompletionListener);
 		mPlayer.setOnBufferingUpdateListener(mOnBufferingUpdateListener);
 		mPlayer.setOnErrorListener(mOnErrorListener);
 		mPlayer.setOnInfoListener(mOnInfoListener);
+		
 		mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		
-		
-		try {
-			mPlayer.setDataSource(context, userMusic.songUris.get(currentSong));
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Log.d("MusicPlayer", "MusicPlayer Instantiated");
+		musicPlayer.setDataSource(currentSongIndex);
+		Log.d("MusicPlayer", "MusicPlayer First Instance Instantiated");
 	}
- 
+	
 	/* METHOD WRAPPING FOR STATE CHANGES */
 	public static enum State {
 		IDLE, ERROR, INITIALIZED, PREPARING, PREPARED, STARTED, STOPPED, PLAYBACK_COMPLETE, PAUSED;
 	}
  
-	public void setDataSource(String path) {
+	public void setDataSource(int songIndex) {
 		if (currentState == State.IDLE) {
 			try {
-				mPlayer.setDataSource(path);
+				mPlayer.setDataSource(context, userMusic.songUris.get(songIndex));
 				currentState = State.INITIALIZED;
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
@@ -93,15 +84,12 @@ public class MusicPlayer {
 	}
  
 	public void prepareAsync() {
-		Log.d(tag, "prepareAsync() New2");
 //		if (EnumSet.of(State.INITIALIZED, State.STOPPED).contains(currentState)) {
 			mPlayer.prepareAsync();
 			currentState = State.PREPARING;
 //		} else throw new RuntimeException();
 		
-		//And another crash for the 201 songs error	
 		Log.d(tag, "prepared Async()"); 
-		//Log.d(tag, userMusic.songTitles.get(201));
 	}
  
 	public boolean isPlaying() {
@@ -126,11 +114,22 @@ public class MusicPlayer {
 		} else throw new RuntimeException();
 	}
  
-	public void start() {
-		Log.d(tag, "start()");
+	public void play() {
+		Log.d(tag, "play()");
 		if (EnumSet.of(State.PREPARED, State.STARTED, State.PAUSED, State.PLAYBACK_COMPLETE).contains(currentState)) {
 			mPlayer.start();
 			currentState = State.STARTED;
+			Log.d("Music Player play()", playHistoryIndex.get(playHistoryIndex.size() - 1).toString());
+			Log.d("Music Player play()", String.valueOf(currentSongIndex ));
+			Log.d("Music Player play()", String.valueOf(historyIndex ));
+			Log.d("Music Player play()", "PlayHistoryIndex Size = " + String.valueOf(playHistoryIndex.size() - 1));
+			//Add song to Music History 
+			//Do not add if the song about to play is the same as the one that was playing previously (e.g. user pauses music)
+			//Also do not add if the user is in the middle of their play history from the session
+			if (playHistoryIndex.get(playHistoryIndex.size() - 1) != currentSongIndex && historyIndex == playHistoryIndex.size()) {
+				playHistoryIndex.add(currentSongIndex);
+			}
+						
 		} else throw new RuntimeException();
 	}
  
@@ -147,6 +146,37 @@ public class MusicPlayer {
 		Log.d(tag, "reset()");
 		mPlayer.reset();
 		currentState = State.IDLE;
+	}
+	
+	public void next() {
+		musicPlayer.stop();
+		musicPlayer.reset();
+		
+		//set data source
+		if(historyIndex < playHistoryIndex.size() - 1) {
+			Log.d(tag, "playHistoryIndex Array size is: " + String.valueOf(playHistoryIndex.size()));
+			musicPlayer.setDataSource(playHistoryIndex.get(historyIndex + 1));
+		}
+		else {
+			int newSong = random.nextInt(userMusic.numSongs);
+			musicPlayer.setDataSource(newSong);
+			currentSongIndex = newSong;
+		}
+		musicPlayer.prepareAsync();
+		historyIndex++;
+	}
+	
+	public void previous() {
+		//Only change song if there is a previous one to go to
+		if (historyIndex > 0) {
+			musicPlayer.stop();
+			musicPlayer.reset();
+			Log.e(tag, "playHistoryIndex Array size is: " + String.valueOf(playHistoryIndex.size()));
+			musicPlayer.setDataSource(playHistoryIndex.get(historyIndex - 1));
+			musicPlayer.prepareAsync();
+			currentSongIndex = playHistoryIndex.get(historyIndex - 1);
+			historyIndex--;	
+		}
 	}
  
 	/**
@@ -168,10 +198,8 @@ public class MusicPlayer {
 		@Override
 		public void onPrepared(MediaPlayer mp) {
 			Log.d(tag, "on prepared");
-			isPrepared = true;
 			currentState = State.PREPARED;
 			musicPlayer.onPrepared(mp);
-			mPlayer.start();
 			currentState = State.STARTED;
 		}
 	};
@@ -214,10 +242,12 @@ public class MusicPlayer {
  
 	/* EXTERNAL STUBS TO OVERRIDE */
 	public void onPrepared(MediaPlayer mp) {
-		
+		isPrepared = true;
+		musicPlayer.play();
 	}
  
 	public void onCompletion(MediaPlayer mp) {
+		
 		
 	}
  
@@ -280,6 +310,10 @@ public class MusicPlayer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+		
+	public String getCurrentSongTitle() {
+		return userMusic.songTitles.get(currentSongIndex);
 	}
 	
 }

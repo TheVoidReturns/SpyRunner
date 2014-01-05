@@ -11,7 +11,8 @@ public interface iMusicPlayer {
 	void play();
 	void pause();
 	void stop();
-	void skip();
+	void next();
+	void previous();
 	void restart();
 	
 	//A reduction in volume for voice feedback and mission events

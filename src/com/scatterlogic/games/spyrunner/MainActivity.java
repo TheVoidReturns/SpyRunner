@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
 		//display the screen
 		setContentView(R.layout.activity_main);
 		
+		
 		//and set up the listeners
 		findViewById(R.id.missionselectbutton).setOnClickListener(new OnClickListener() {
 		    public void onClick(View v) {
