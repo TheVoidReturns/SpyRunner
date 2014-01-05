@@ -220,12 +220,14 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 		mileStonesPassed++;
 	}
 
+	
+	//This sets up the voice feedback
 	@Override
 	public void onInit(int status) {
 
         if (status == TextToSpeech.SUCCESS) {
  
-            int result = voiceFeedback.setLanguage(Locale.ENGLISH);
+            int result = voiceFeedback.setLanguage(Locale.UK);
  
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
