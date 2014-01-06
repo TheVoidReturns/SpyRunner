@@ -161,8 +161,8 @@ public class RobinGPSTracker implements iExerciseTracker
 	public double getAltitudeGain() {
 		// TODO Auto-generated method stub
 		if (locationsList.size() > 3){
-			return (locationsList.get(locationsList.size()).getAltitude() - 
-					locationsList.get(locationsList.size()-1).getAltitude());
+			return (locationsList.get(locationsList.size()-1).getAltitude() - 
+					locationsList.get(locationsList.size()-2).getAltitude());
 		}
 		return 0;
 	}
