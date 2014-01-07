@@ -20,8 +20,9 @@ import android.os.PowerManager;
 import android.content.pm.*;
 import android.speech.tts.*;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import java.util.*;
 
-public class MissionControlActivity extends Activity implements OnInitListener {
+public class MissionControlActivity extends Activity {
 
 	// This/These intent(s) will be used to transist to new activities from here...
 	Intent missionReview;
@@ -55,6 +56,8 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 	
 	//A file to write to...
 	RobinFileWriter thisMission;
+	
+	
 	
 	//a timer object to keep an eye on the clock
 	RobinTimerObject timer;
@@ -104,7 +107,6 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 		stat3 = (TextView) findViewById(R.id.missioncontrolstat3);
 		stat4 = (TextView) findViewById(R.id.missioncontrolstat4);
 		feedback = (TextView) findViewById(R.id.missioncontrolfeedback);
-		voiceFeedback = new TextToSpeech(this,this);
 		
 		musicPlay = (ImageButton) findViewById(R.id.music_play);
 		musicPause = (ImageButton) findViewById(R.id.music_pause);
@@ -152,7 +154,8 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 		
 		//Launch the file
 		thisMission = new RobinFileWriter("Mission Logs", "TestMission.txt");
-
+		
+		
 		//*********************This bit is all about launching the Review Mission Screen, It probably won't be a button
 		missionReview = new Intent(this, ReviewMissionActivity.class);
 		findViewById(R.id.mission_review).setOnClickListener(new OnClickListener() {
@@ -242,42 +245,9 @@ public class MissionControlActivity extends Activity implements OnInitListener {
 	}
 	//this is the method which decides if any audio feedback or log information is needed
 	private void missionReact(){
-		//Log.d("MissionControl", "At Milestone " + mileStonesPassed);
-		//feedback.setText("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime);
-		if (mileStonesPassed < 1){
-			voiceFeedback.speak
-				("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime,
-					TextToSpeech.QUEUE_FLUSH, null);
-		}
-		if (mileStonesPassed%50==0){
-			voiceFeedback.speak
-				("You are in Heart Rate Zone " + currentHRZone +"\nThe timer is "+ elapsedTime,
-					TextToSpeech.QUEUE_FLUSH, null);
-		}
-		mileStonesPassed++;
 	}
 
-	
-	//This sets up the voice feedback
-	@Override
-	public void onInit(int status) {
-
-        if (status == TextToSpeech.SUCCESS) {
- 
-            int result = voiceFeedback.setLanguage(Locale.UK);
- 
-            if (result == TextToSpeech.LANG_MISSING_DATA
-                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
-                feedback.setText("This Language is not supported");
-            } else {
-                feedback.setText("Speech enabled");
-                voiceFeedback.setSpeechRate((float) 0.8);
-            }
- 
-        } else {
-            Log.e("TTS", "Initilization Failed!");
-        }
+	public void loadMission(){
 		
 	}
 }
