@@ -18,8 +18,6 @@ import java.util.Locale;
 import android.util.*;
 import android.os.PowerManager;
 import android.content.pm.*;
-import android.speech.tts.*;
-import android.speech.tts.TextToSpeech.OnInitListener;
 import java.util.*;
 
 public class MissionControlActivity extends Activity {
@@ -62,9 +60,6 @@ public class MissionControlActivity extends Activity {
 	
 	//a timer object to keep an eye on the clock
 	RobinTimerObject timer;
-	
-	//A speech thing
-	TextToSpeech voiceFeedback;
 	
 	//Keep the screen alive
 	PowerManager.WakeLock wl;

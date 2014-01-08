@@ -7,7 +7,7 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.*;
 import android.content.*;
 
-public class simpleMission implements iMission, OnInitListener 
+public class simpleMission implements iMission, TextToSpeech.OnInitListener 
 {
 	String missionName;
 	RobinFileWriter missionFile;
