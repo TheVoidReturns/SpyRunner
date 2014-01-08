@@ -54,8 +54,9 @@ public class MissionControlActivity extends Activity {
 	Handler mHandler;
 	private boolean running;
 	
-	//A file to write to...
-	RobinFileWriter thisMission;
+	//A file to write to, and a mission to run...
+	RobinFileWriter missionFile;
+	iMission thisMission;
 	
 	
 	
@@ -92,8 +93,16 @@ public class MissionControlActivity extends Activity {
 		//Set The Screen, lock into portrait
 		setContentView(R.layout.activity_mission_control);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        
-        //Create music player object     	
+       
+		//let's get the passed mission loaded.
+		//The lines below are eventually going to have to extract an extra
+		//passed by the intent of the mission briefing/mission select
+        //for the moment, we'll be explicit, and it should load the dummy
+		//mission in SimpleMission
+		thisMission = new simpleMission("Mission 1", this);
+		
+		//Can the lines below be further compacted?
+		//Create music player object     	
         musicPlayer = new MusicPlayer(getApplicationContext());
         
         //Prepare the music player in a separate thread
@@ -101,7 +110,7 @@ public class MissionControlActivity extends Activity {
         
         //This is used for music testing
         songTest = (TextView) findViewById(R.id.song_test);
-        
+       
 		stat1 = (TextView) findViewById(R.id.missioncontrolstat1);
 		stat2 = (TextView) findViewById(R.id.missioncontrolstat2);
 		stat3 = (TextView) findViewById(R.id.missioncontrolstat3);
@@ -153,7 +162,7 @@ public class MissionControlActivity extends Activity {
 		stat4.setText("Awaits4");
 		
 		//Launch the file
-		thisMission = new RobinFileWriter("Mission Logs", "TestMission.txt");
+		missionFile = new RobinFileWriter("Mission Logs", "TestMission.txt");
 		
 		
 		//*********************This bit is all about launching the Review Mission Screen, It probably won't be a button
@@ -183,7 +192,7 @@ public class MissionControlActivity extends Activity {
 	{
 		super.onPause();
 		wl.release();
-		thisMission.Append(myExerciseTracker.getDistance() + "km finished in " +
+		missionFile.Append(myExerciseTracker.getDistance() + "km finished in " +
 				timer.getElapsedTimeAsString());
 	}
 
@@ -217,7 +226,7 @@ public class MissionControlActivity extends Activity {
 				songTitle = musicPlayer.getCurrentSongTitle();
 				
 				//A method to be written...
-				missionReact();
+				thisMission.checkPrompts(elapsedTime,currentSpeed,currentHRZone,altitudeGain);		
 				
 				//And update the text fields
 				updateScreenFields();
@@ -226,7 +235,7 @@ public class MissionControlActivity extends Activity {
     	}
     };
 	private void updateScreenFields(){
-		stat1.setText(myExerciseTracker.getSpeed() + "km/h");
+		stat1.setText(currentSpeed + "km/h");
 		stat2.setText(myExerciseTracker.getDistance()+"km");
 		stat3.setText(myExerciseTracker.getPace()+"mins/km");
 		stat4.setText(timer.getElapsedTimeAsString());
@@ -238,16 +247,7 @@ public class MissionControlActivity extends Activity {
 			if (myExerciseTracker.getCurrentLocation()==null){
 				//feedback.setText("No sats");
 			}
-			else{
-				//feedback.setText(myExerciseTracker.getLocationAsString() + "\n");
-			}
+			feedback.setText(thisMission.getFeedbackString(elapsedTime));
 		}
-	}
-	//this is the method which decides if any audio feedback or log information is needed
-	private void missionReact(){
-	}
-
-	public void loadMission(){
-		
 	}
 }

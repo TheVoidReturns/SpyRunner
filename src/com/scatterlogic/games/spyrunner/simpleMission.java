@@ -16,6 +16,7 @@ public class simpleMission implements iMission, OnInitListener
 	ArrayList<Milestone> timePrompts;
 	ArrayList<Milestone> slowPrompts;
 	ArrayList<Milestone> fastPrompts;
+	
 
 	//Array list position markers
 	int timePromptsMarker;
@@ -27,8 +28,17 @@ public class simpleMission implements iMission, OnInitListener
 
 	//Voice feedback
 	TextToSpeech voiceFeedback;
+	String feedback;
 	
 	public simpleMission(String missionName, Context caller){
+
+		timePrompts = new ArrayList<Milestone>();
+		slowPrompts = new ArrayList<Milestone>();
+		fastPrompts = new ArrayList<Milestone>();
+		
+		timePromptsMarker = 0;
+		slowPromptsMarker = 0;
+		fastPromptsMarker = 0;
 		
 		//read in the file
 		missionFile = new RobinFileWriter("Mission Files", missionName + ".txt");
@@ -47,7 +57,7 @@ public class simpleMission implements iMission, OnInitListener
 		String[] parsedFileContents = unparsedFileContents.split("\n");
 		
 		//separate the elements within the lines (semicolon split values)
-		for (int i = 1; i<parsedFileContents.length; i++){
+		for (int i = 0; i<parsedFileContents.length; i++){
 			String[] parsedLine = parsedFileContents[i].split(";");
 			long thisTime = Long.parseLong(parsedLine[0]);
 			String thisDesc = parsedLine[1];
@@ -56,14 +66,15 @@ public class simpleMission implements iMission, OnInitListener
 			int targetHR = Integer.parseInt(parsedLine[4]);
 			
 			//add the elements to the appropriate list
-			if (thisDesc.equals("Slow")) slowPrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, false, thisMultiFire,0));
-			else if (thisDesc.equals("Fast")) fastPrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, false, thisMultiFire,0));
-			else timePrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, false, thisMultiFire,targetHR));
+			Log.d("SimpleMission","Now adding " + thisPrompt + " to " + thisDesc);
+			if (thisDesc.equals("Slow")) slowPrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, thisMultiFire,0));
+			else if (thisDesc.equals("Fast")) fastPrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, thisMultiFire,0));
+			else timePrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, thisMultiFire,targetHR));
 		}
 		voiceFeedback = new TextToSpeech(caller,this);
 	}
 
-	@Override
+	@Override 
 	public void checkPrompts(long timerValue, float speed, int HRate, double altitude)
 	{
 
@@ -71,7 +82,10 @@ public class simpleMission implements iMission, OnInitListener
 			if (timerValue >= timePrompts.get(timePromptsMarker).millisTime){
 				timePromptsMarker++;
 				if (timePromptsMarker >= timePrompts.size()) timePromptsMarker = timePrompts.size()-1;
-				voiceFeedback.speak(timePrompts.get(timePromptsMarker).getPrompt(),TextToSpeech.QUEUE_FLUSH,null);
+				feedback = timePrompts.get(timePromptsMarker).getPrompt();
+				voiceFeedback.speak(feedback,TextToSpeech.QUEUE_FLUSH,null);
+
+				Log.d("SimpleMission", "Trying to say " + feedback + " which is the " + timePromptsMarker + " elememt of the array.");
 			}
 			if (timerValue >= slowPrompts.get(slowPromptsMarker).millisTime)
 				slowPromptsMarker++;
@@ -94,10 +108,10 @@ public class simpleMission implements iMission, OnInitListener
 	{
 		if (!successfulLoading) return "File "+missionName+" not found.";
 		else{
-				if(timePrompts.size()>=timePromptsMarker){
+				if(timePrompts.size()<=timePromptsMarker){
 					return "Mission Completed";
 				}
-				else return timePrompts.get(timePromptsMarker).getPrompt();
+				else return feedback;
 		}
 	}
 	//This sets up the voice feedback
@@ -123,9 +137,15 @@ public class simpleMission implements iMission, OnInitListener
 		missionFile.Append("0;Slow;The undetermined thing is getting away!;false;0");
 		missionFile.Append("0;Fast;You're going too fast!;false;0");
 		missionFile.Append("2000;Briefing;Let's go nice and slowly;false;2");
-		missionFile.Append("300000;Fast;Speed up for the reason to do with the plot!;false;4");
-		missionFile.Append("360000;Fast;WELL DONE.  Now slow down again.;false;3");
-		missionFile.Append("600000;Fast;Speed up for the reason to do with the plot!;false;4");
-		missionFile.Append("660000;Fast;Nice!;false;4");
+		missionFile.Append("300000;Interval1;Speed up for the reason to do with the plot!;false;4");
+		missionFile.Append("360000;Interval2;WELL DONE.  Now slow down again.;false;3");
+		missionFile.Append("600000;Interval3;Speed up for the reason to do with the plot!;false;4");
+		missionFile.Append("660000;Interval4;Nice!;false;4");
+	}
+
+	@Override
+	public boolean isReady()
+	{
+		return true;
 	}
 }
