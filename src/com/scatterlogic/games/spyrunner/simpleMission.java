@@ -77,15 +77,13 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 	@Override 
 	public void checkPrompts(long timerValue, float speed, int HRate, double altitude)
 	{
-
+		Log.d("SimpleMission", "Comparing "+timerValue +" to "+ timePrompts.get(timePromptsMarker).millisTime);
 		if (!voiceFeedback.isSpeaking()){
 			if (timerValue >= timePrompts.get(timePromptsMarker).millisTime){
 				timePromptsMarker++;
 				if (timePromptsMarker >= timePrompts.size()) timePromptsMarker = timePrompts.size()-1;
 				feedback = timePrompts.get(timePromptsMarker).getPrompt();
-				voiceFeedback.speak(feedback,TextToSpeech.QUEUE_FLUSH,null);
-
-				Log.d("SimpleMission", "Trying to say " + feedback + " which is the " + timePromptsMarker + " elememt of the array.");
+				speakOut(feedback);
 			}
 			if (timerValue >= slowPrompts.get(slowPromptsMarker).millisTime)
 				slowPromptsMarker++;
@@ -96,10 +94,10 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 			if (fastPromptsMarker >= fastPrompts.size()) fastPromptsMarker = fastPrompts.size()-1;
 		
 			if (timePrompts.get(timePromptsMarker).targetHR < HRate)
-				voiceFeedback.speak(fastPrompts.get(fastPromptsMarker).getPrompt(),TextToSpeech.QUEUE_FLUSH,null);
+				speakOut(fastPrompts.get(fastPromptsMarker).getPrompt());
 	
 			if (timePrompts.get(timePromptsMarker).targetHR > HRate)
-				voiceFeedback.speak(slowPrompts.get(slowPromptsMarker).getPrompt(),TextToSpeech.QUEUE_FLUSH,null);
+				speakOut(slowPrompts.get(slowPromptsMarker).getPrompt());
 		}
 	}
 
@@ -114,6 +112,10 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 				else return feedback;
 		}
 	}
+	public void speakOut(String inString){
+		Log.d("SimpleMission", "SpeakOut asked to utter " + inString);
+		voiceFeedback.speak(inString,TextToSpeech.QUEUE_ADD,null);
+	}
 	//This sets up the voice feedback
 	@Override
 	public void onInit(int status) {
@@ -127,6 +129,9 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
                 Log.e("TTS", "This Language is not supported");
             } else {
                 voiceFeedback.setSpeechRate((float) 0.8);
+				voiceFeedback.speak("Speech on",TextToSpeech.QUEUE_ADD,null);
+				speakOut("Like, really");
+                Log.d("TTS", "Speech enabled");
             }
 
         } else {
@@ -137,10 +142,10 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 		missionFile.Append("0;Slow;The undetermined thing is getting away!;false;0");
 		missionFile.Append("0;Fast;You're going too fast!;false;0");
 		missionFile.Append("2000;Briefing;Let's go nice and slowly;false;2");
-		missionFile.Append("300000;Interval1;Speed up for the reason to do with the plot!;false;4");
-		missionFile.Append("360000;Interval2;WELL DONE.  Now slow down again.;false;3");
-		missionFile.Append("600000;Interval3;Speed up for the reason to do with the plot!;false;4");
-		missionFile.Append("660000;Interval4;Nice!;false;4");
+		missionFile.Append("30000;Interval1;Speed up for the reason to do with the plot!;false;4");
+		missionFile.Append("36000;Interval2;WELL DONE.  Now slow down again.;false;3");
+		missionFile.Append("60000;Interval3;Speed up for the reason to do with the plot!;false;4");
+		missionFile.Append("66000;Interval4;Nice!;false;4");
 	}
 
 	@Override
