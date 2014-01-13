@@ -59,7 +59,7 @@ public class MissionBriefingActivity extends Activity {
 		final View contentView = findViewById(R.id.fullscreen_content);
 
 		TextView textBack = (TextView) findViewById(R.id.fullscreen_content);
-		textBack.setText("Hiya");
+		textBack.setText(getIntent().getStringExtra("FileName"));
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,

@@ -57,7 +57,7 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 		String[] parsedFileContents = unparsedFileContents.split("\n");
 		
 		//separate the elements within the lines (semicolon split values)
-		for (int i = 0; i<parsedFileContents.length; i++){
+		for (int i = 2; i<parsedFileContents.length; i++){
 			String[] parsedLine = parsedFileContents[i].split(";");
 			long thisTime = Long.parseLong(parsedLine[0]);
 			String thisDesc = parsedLine[1];
@@ -80,10 +80,10 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 		Log.d("SimpleMission", "Comparing "+timerValue +" to "+ timePrompts.get(timePromptsMarker).millisTime);
 		if (!voiceFeedback.isSpeaking()){
 			if (timerValue >= timePrompts.get(timePromptsMarker).millisTime){
-				timePromptsMarker++;
-				if (timePromptsMarker >= timePrompts.size()) timePromptsMarker = timePrompts.size()-1;
 				feedback = timePrompts.get(timePromptsMarker).getPrompt();
 				speakOut(feedback);
+				timePromptsMarker++;
+				if (timePromptsMarker >= timePrompts.size()) timePromptsMarker = timePrompts.size()-1;
 			}
 			if (timerValue >= slowPrompts.get(slowPromptsMarker).millisTime)
 				slowPromptsMarker++;
