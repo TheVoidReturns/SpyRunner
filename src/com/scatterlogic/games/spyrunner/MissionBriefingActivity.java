@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.*;
 
 
 /**
@@ -57,6 +58,8 @@ public class MissionBriefingActivity extends Activity {
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
 
+		TextView textBack = (TextView) findViewById(R.id.fullscreen_content);
+		textBack.setText("Hiya");
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,

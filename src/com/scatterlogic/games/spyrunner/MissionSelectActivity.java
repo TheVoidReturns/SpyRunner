@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import java.io.*;
+import android.os.*;
 
 
 public class MissionSelectActivity extends Activity {
@@ -33,10 +35,11 @@ public class MissionSelectActivity extends Activity {
 				Log.d("Mission Select Activity", "About to add " + availableMissions.get(i).mTitle + ".");
 				RelativeLayout nextView = availableMissions.get(i).getWindowBlob();
 				lines.addView(nextView);
-				
+				final String extra = availableMissions.get(i).getFileName();
 				missionBriefing= new Intent(this, MissionBriefingActivity.class);
 				nextView.setOnClickListener(new OnClickListener() {
 				    public void onClick(View v) {
+						missionBriefing.putExtra("FileName",extra);
 				    	startActivity(missionBriefing);
 				    } 
 				});
@@ -44,11 +47,54 @@ public class MissionSelectActivity extends Activity {
 			}
 		}
 	private void getAvailableMissionList(){
-		//TODO:  This, properly
-		availableMissions.add(new MissionSummary("Mission 1","The Saga Begins", "Bad", this));
-		availableMissions.add(new MissionSummary("Mission 2","The Saga Continues", "Bad", this));
-		availableMissions.add(new MissionSummary("Mission 3","The Saga Ends", "Bad", this));
-		availableMissions.add(new MissionSummary("Mission 4","The Saga Goes for an unneccessary sequel", "Bad", this));
+		File missionFolder = new File(Environment.getExternalStorageDirectory()+"/Mission Files");
+		
+		//gets a list of the files
+		File[] sdDirList = missionFolder.listFiles();
+		
+		String missionTitle;
+		String missionDesc;
+		String pBest;
+		File fileToHandle;
+		for(int i=0;i<sdDirList.length;i++){
+			fileToHandle = new File(Environment.getExternalStorageDirectory()+
+						"/Mission Files/"+sdDirList[i].getName());
+			String params = ReadFileContents(fileToHandle);
+			String [] tokenized = params.split("\n");
+			missionTitle = tokenized[0];
+			missionDesc = tokenized[1];
+			pBest = "N/K";
+			availableMissions.add(new MissionSummary(missionTitle,missionDesc, pBest,fileToHandle.getName(),this));
+		}
+	}
+	
+	public String ReadFileContents(File fileToHandle){
+		String output = "";
+		try
+		{
+			BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(fileToHandle));
+			while (inputStream.available() > 0)
+			{
+				output = output + (char) inputStream.read();
+			}
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return output;
+	}
+
+	/* Checks if external storage is available to at least read */
+	public boolean isExternalStorageReadable() {
+	    String state = Environment.getExternalStorageState();
+	    if (Environment.MEDIA_MOUNTED.equals(state) ||
+	        Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+	        Log.d("FileWriter", "External Readable");
+	    	return true;
+	    }
+	    Log.d("FileWriter", "External Not Readable");
+	    return false;
 	}
 }
 
