@@ -31,7 +31,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int fullscreen_content=0x7f070000;
         public static final int fullscreen_content_controls=0x7f070001;
         public static final int imageView1=0x7f070017;
-        public static final int mission_briefing=0x7f070015;
+        public static final int lines=0x7f070015;
         public static final int mission_log=0x7f070014;
         public static final int mission_review=0x7f07000e;
         public static final int missioncontrolfeedback=0x7f07000d;

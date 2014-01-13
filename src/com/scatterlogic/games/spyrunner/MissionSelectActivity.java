@@ -1,37 +1,55 @@
 package com.scatterlogic.games.spyrunner;
 
-import android.annotation.TargetApi;
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.MotionEvent;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import java.util.*;
-import android.widget.*;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 
 public class MissionSelectActivity extends Activity {
 	Intent missionBriefing;
 
-	private ArrayList<String> availableMissions; 
+	private ArrayList<MissionSummary> availableMissions; 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-			setContentView(R.layout.activity_mission_select);
-			availableMissions = new ArrayList<String>();
-			final LinearLayout lines = (LinearLayout) findViewById(R.layout.activity_mission_select);
+		setContentView(R.layout.activity_mission_select);
+			availableMissions = new ArrayList<MissionSummary>();
+			final LinearLayout lines = (LinearLayout) findViewById(R.id.lines);
+			Log.d("Mission Select Activity", "So far, so good: lines found.");
 			lines.setScrollContainer(true);
+			lines.setBackgroundColor(Color.RED);
 			
-			availableMissions = getAvailableMissionList();
+			getAvailableMissionList();
 			for (int i = 0; i < availableMissions.size(); i++){
-				workers.add(new Worker(this, ost[i]));
-				lines.addView(workers.get(i).getWindowBlob());
+				Log.d("Mission Select Activity", "About to add " + availableMissions.get(i).mTitle + ".");
+				RelativeLayout nextView = availableMissions.get(i).getWindowBlob();
+				lines.addView(nextView);
+				
+				missionBriefing= new Intent(this, MissionBriefingActivity.class);
+				nextView.setOnClickListener(new OnClickListener() {
+				    public void onClick(View v) {
+				    	startActivity(missionBriefing);
+				    } 
+				});
+				
 			}
 		}
+	private void getAvailableMissionList(){
+		//TODO:  This, properly
+		availableMissions.add(new MissionSummary("Mission 1","The Saga Begins", "Bad", this));
+		availableMissions.add(new MissionSummary("Mission 2","The Saga Continues", "Bad", this));
+		availableMissions.add(new MissionSummary("Mission 3","The Saga Ends", "Bad", this));
+		availableMissions.add(new MissionSummary("Mission 4","The Saga Goes for an unneccessary sequel", "Bad", this));
+	}
 }
 
 
