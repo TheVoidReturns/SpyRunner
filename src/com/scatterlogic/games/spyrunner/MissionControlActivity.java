@@ -94,7 +94,7 @@ public class MissionControlActivity extends Activity {
 		//passed by the intent of the mission briefing/mission select
         //for the moment, we'll be explicit, and it should load the dummy
 		//mission in SimpleMission
-		thisMission = new simpleMission("Mission 1", this);
+		thisMission = new simpleMission(getIntent().getStringExtra("FileName"), this);
 		
 		//Can the lines below be further compacted?
 		//Create music player object     	

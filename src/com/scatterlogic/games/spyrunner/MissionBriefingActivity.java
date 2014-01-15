@@ -125,6 +125,7 @@ public class MissionBriefingActivity extends Activity {
 		missionControl = new Intent(this, MissionControlActivity.class);
 		findViewById(R.id.start_mission).setOnClickListener(new OnClickListener() {
 		    public void onClick(View v) {
+		    	missionControl.putExtra("FileName", getIntent().getStringExtra("FileName"));
 		    	startActivity(missionControl);
 		    } 
 		});

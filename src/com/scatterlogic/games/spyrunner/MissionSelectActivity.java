@@ -36,35 +36,50 @@ public class MissionSelectActivity extends Activity {
 				RelativeLayout nextView = availableMissions.get(i).getWindowBlob();
 				lines.addView(nextView);
 				final String extra = availableMissions.get(i).getFileName();
-				missionBriefing= new Intent(this, MissionBriefingActivity.class);
-				nextView.setOnClickListener(new OnClickListener() {
-				    public void onClick(View v) {
-						missionBriefing.putExtra("FileName",extra);
-				    	startActivity(missionBriefing);
-				    } 
-				});
+				
+				if (!(extra.equals("N/A"))){
+					missionBriefing= new Intent(this, MissionBriefingActivity.class);
+					nextView.setOnClickListener(new OnClickListener() {
+					    public void onClick(View v) {
+							missionBriefing.putExtra("FileName",extra);
+					    	startActivity(missionBriefing);
+					    } 
+					});
+				} else {
+					missionBriefing= new Intent(this, MissionDownLoadActivity.class);
+					nextView.setOnClickListener(new OnClickListener() {
+					    public void onClick(View v) {
+					    	startActivity(missionBriefing);
+					    } 
+					});
+
+				}
 				
 			}
 		}
 	private void getAvailableMissionList(){
-		File missionFolder = new File(Environment.getExternalStorageDirectory()+"/Mission Files");
-		
-		//gets a list of the files
-		File[] sdDirList = missionFolder.listFiles();
-		
-		String missionTitle;
-		String missionDesc;
-		String pBest;
-		File fileToHandle;
-		for(int i=0;i<sdDirList.length;i++){
-			fileToHandle = new File(Environment.getExternalStorageDirectory()+
-						"/Mission Files/"+sdDirList[i].getName());
-			String params = ReadFileContents(fileToHandle);
-			String [] tokenized = params.split("\n");
-			missionTitle = tokenized[0];
-			missionDesc = tokenized[1];
-			pBest = "N/K";
-			availableMissions.add(new MissionSummary(missionTitle,missionDesc, pBest,fileToHandle.getName(),this));
+		try{
+			File missionFolder = new File(Environment.getExternalStorageDirectory()+"/Mission Files");
+			//gets a list of the files
+			File[] sdDirList = missionFolder.listFiles();
+			
+			String missionTitle;
+			String missionDesc;
+			String pBest;
+			File fileToHandle;
+			for(int i=0;i<sdDirList.length;i++){
+				fileToHandle = new File(Environment.getExternalStorageDirectory()+
+							"/Mission Files/"+sdDirList[i].getName());
+				String params = ReadFileContents(fileToHandle);
+				String [] tokenized = params.split("\n");
+				missionTitle = tokenized[0];
+				missionDesc = tokenized[1];
+				pBest = "N/K";
+				availableMissions.add(new MissionSummary(missionTitle,missionDesc, pBest,fileToHandle.getName(),this));
+			}
+		}
+		catch (NullPointerException e) {
+		    availableMissions.add(new MissionSummary("No missions found", "Click here to download new missions", "", "N/A",this));
 		}
 	}
 	

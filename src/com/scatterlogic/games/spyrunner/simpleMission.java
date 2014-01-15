@@ -41,11 +41,8 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 		fastPromptsMarker = 0;
 		
 		//read in the file
-		missionFile = new RobinFileWriter("Mission Files", missionName + ".txt");
+		missionFile = new RobinFileWriter("Mission Files", missionName);
 		if (missionFile.ReadFileContents().equals("")){
-			//makeDummyMission####################
-			makeDummyMission();
-			//####################################
 			successfulLoading = false;
 		}
 		else{
@@ -136,15 +133,6 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
         } else {
             Log.e("TTS", "Initilization Failed!");
         }
-	}
-	void makeDummyMission(){
-		missionFile.Append("0;Slow;The undetermined thing is getting away!;false;0");
-		missionFile.Append("0;Fast;You're going too fast!;false;0");
-		missionFile.Append("2000;Briefing;Let's go nice and slowly;false;2");
-		missionFile.Append("30000;Interval1;Speed up for the reason to do with the plot!;false;4");
-		missionFile.Append("36000;Interval2;WELL DONE.  Now slow down again.;false;3");
-		missionFile.Append("60000;Interval3;Speed up for the reason to do with the plot!;false;4");
-		missionFile.Append("66000;Interval4;Nice!;false;4");
 	}
 
 	@Override

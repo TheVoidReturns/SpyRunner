@@ -39,7 +39,7 @@
             android:name="com.scatterlogic.games.spyrunner.MissionControlActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_mission_control"
-            android:theme="@style/FullscreenTheme" >
+          	android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         </activity>
         <activity
             android:name="com.scatterlogic.games.spyrunner.MissionBriefingActivity"
@@ -51,7 +51,13 @@
             android:name="com.scatterlogic.games.spyrunner.MissionSelectActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_mission_select"
-            android:theme="@style/FullscreenTheme" >
+          	android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+        </activity>
+        <activity
+            android:name="com.scatterlogic.games.spyrunner.MissionDownLoadActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_mission_select"
+          	android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         </activity>
         <activity
             android:name="com.scatterlogic.games.spyrunner.SplashActivity"
