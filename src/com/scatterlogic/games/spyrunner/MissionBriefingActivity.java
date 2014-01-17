@@ -19,6 +19,7 @@ import android.widget.*;
  * @see SystemUiHider
  */
 public class MissionBriefingActivity extends Activity {
+	MissionObject thisMission;
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -57,9 +58,9 @@ public class MissionBriefingActivity extends Activity {
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
-
+		thisMission = new MissionObject(getIntent().getStringExtra("FileName"));
 		TextView textBack = (TextView) findViewById(R.id.fullscreen_content);
-		textBack.setText(getIntent().getStringExtra("FileName"));
+		textBack.setText(thisMission.getParameter("Briefing"));
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,

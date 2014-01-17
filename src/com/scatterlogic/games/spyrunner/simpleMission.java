@@ -37,17 +37,17 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 		voiceFeedback = new TextToSpeech(caller,this);
 		
 		//Read in the timed events
-		slowPromptTracker = 0;
-		fastPromptTracker = 0;
+		slowPromptTracker = -1;
+		fastPromptTracker = -1;
 		
 		loadTimedEvents();
 		loadSlowEvents();
 		loadFastEvents();
 	}
-
 	@Override 
 	public void checkPrompts(long timerValue, float speed, int HRate, double altitude)
 	{
+		Log.d("simpleMission", "Trackers are at: timed:" + timedPromptTracker + ", fast: " + fastPromptTracker + ", slow: " + slowPromptTracker);
 		if (timedPromptTracker < timedPrompts.length){
 			if (timerValue >= timedPromptTimers[timedPromptTracker]){
 					speakOut(timedPrompts[timedPromptTracker]);
@@ -55,28 +55,33 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 			} else{
 				if (HRate < promptHRs[timedPromptTracker]){
 					if ((timerValue - timeOfLastSpeedPrompt) >= millisBetweenSpeedPrompts){
-						speakOut(slowPrompts[slowPromptTracker]);
-						timeOfLastSpeedPrompt = timerValue;
+						if (slowPromptTracker >= 0){
+							speakOut(slowPrompts[slowPromptTracker]);
+							timeOfLastSpeedPrompt = timerValue;
+						}
 					}
 				}
 				if(HRate > promptHRs[timedPromptTracker]){
 					if ((timerValue - timeOfLastSpeedPrompt) >= millisBetweenSpeedPrompts){
-						speakOut(fastPrompts[fastPromptTracker]);
-						timeOfLastSpeedPrompt = timerValue;
+						if (fastPromptTracker >= 0){
+							speakOut(fastPrompts[fastPromptTracker]);
+							timeOfLastSpeedPrompt = timerValue;
+						}
 					}
 				}
 			}
-			if (timerValue >= fastPromptTimers[fastPromptTracker]){
+		}
+		if (fastPromptTracker < (fastPromptTimers.length-1)){
+			if (timerValue >= fastPromptTimers[fastPromptTracker+1]){
 				fastPromptTracker++;
-				if (fastPromptTracker == fastPromptTimers.length) fastPromptTracker--;
 			}
-			if (timerValue >= slowPromptTimers[slowPromptTracker]){
+		}
+		if (slowPromptTracker < (slowPromptTimers.length-1)){
+			if (timerValue >= slowPromptTimers[slowPromptTracker+1]){
 				slowPromptTracker++;
-				if (slowPromptTracker == slowPromptTimers.length) slowPromptTracker--;
 			}
 		}
 	}
-
 	@Override
 	public String getFeedbackString(long timerValue)
 	{
@@ -87,7 +92,6 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 		Log.d("SimpleMission", "SpeakOut asked to utter " + inString);
 		voiceFeedback.speak(inString,TextToSpeech.QUEUE_ADD,null);
 	}
-	//This sets up the voice feedback
 	@Override
 	public void onInit(int status) {
 
@@ -108,18 +112,15 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
             Log.e("TTS", "Initilization Failed!");
         }
 	}
-
 	@Override
 	public boolean isReady()
 	{
 		return true;
 	}
-
 	@Override
 	public String getParameter(String parameterName) {
 		return thisMission.getParameter(parameterName);
 	}
-
 	@Override
 	public void setParameter(String parameterName, String valueToSetTo) {
 		thisMission.setParameter(parameterName, valueToSetTo);
@@ -161,7 +162,6 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 			promptHRs[0] = 1;
 		}
 	}
-
 	private void loadSlowEvents(){
 		String[] tempStringArray;
 		tempStringArray = thisMission.getAllMatchingTagValues("SlowEvent");
@@ -180,8 +180,7 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 			tempString = tempStringArray[i].split("/,/")[1];
 			slowPrompts[i] = tempString;
 		}
-	}
-	
+	}	
 	private void loadFastEvents(){
 		String[] tempStringArray;
 		tempStringArray = thisMission.getAllMatchingTagValues("FastEvent");
