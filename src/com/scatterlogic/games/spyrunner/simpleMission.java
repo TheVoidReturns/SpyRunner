@@ -9,105 +9,79 @@ import android.content.*;
 
 public class simpleMission implements iMission, TextToSpeech.OnInitListener 
 {
-	String missionName;
-	RobinFileWriter missionFile;
-
-	//Array lists
-	ArrayList<Milestone> timePrompts;
-	ArrayList<Milestone> slowPrompts;
-	ArrayList<Milestone> fastPrompts;
+	MissionObject thisMission;
 	
-
-	//Array list position markers
-	int timePromptsMarker;
-	int slowPromptsMarker;
-	int fastPromptsMarker;
+	final long millisBetweenSpeedPrompts = 30000;
+	long timeOfLastSpeedPrompt;
 	
-	//Was the mission loaded?
-	boolean successfulLoading;
-
+	//timer trackers
+	long[] timedPromptTimers;
+	String[] timedPrompts;
+	int[] promptHRs;
+	int timedPromptTracker;
+	
+	long[] slowPromptTimers;
+	String[] slowPrompts;
+	int slowPromptTracker;
+	
+	long[] fastPromptTimers;
+	String[] fastPrompts;
+	int fastPromptTracker;
+	
 	//Voice feedback
 	TextToSpeech voiceFeedback;
 	String feedback;
 	
-	public simpleMission(String missionName, Context caller){
-
-		timePrompts = new ArrayList<Milestone>();
-		slowPrompts = new ArrayList<Milestone>();
-		fastPrompts = new ArrayList<Milestone>();
-		
-		timePromptsMarker = 0;
-		slowPromptsMarker = 0;
-		fastPromptsMarker = 0;
-		
-		//read in the file
-		missionFile = new RobinFileWriter("Mission Files", missionName);
-		if (missionFile.ReadFileContents().equals("")){
-			successfulLoading = false;
-		}
-		else{
-			successfulLoading = true;
-		}
-		String unparsedFileContents = missionFile.ReadFileContents();
-		
-		//separate the lines
-		String[] parsedFileContents = unparsedFileContents.split("\n");
-		
-		//separate the elements within the lines (semicolon split values)
-		for (int i = 2; i<parsedFileContents.length; i++){
-			String[] parsedLine = parsedFileContents[i].split(";");
-			long thisTime = Long.parseLong(parsedLine[0]);
-			String thisDesc = parsedLine[1];
-			String thisPrompt = parsedLine[2];
-			boolean thisMultiFire = Boolean.parseBoolean(parsedLine[3]);
-			int targetHR = Integer.parseInt(parsedLine[4]);
-			
-			//add the elements to the appropriate list
-			Log.d("SimpleMission","Now adding " + thisPrompt + " to " + thisDesc);
-			if (thisDesc.equals("Slow")) slowPrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, thisMultiFire,0));
-			else if (thisDesc.equals("Fast")) fastPrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, thisMultiFire,0));
-			else timePrompts.add(new Milestone(thisTime, thisDesc, thisPrompt, thisMultiFire,targetHR));
-		}
+	public simpleMission(String missionFileName, Context caller){
+		thisMission = new MissionObject(missionFileName);
 		voiceFeedback = new TextToSpeech(caller,this);
+		
+		//Read in the timed events
+		slowPromptTracker = 0;
+		fastPromptTracker = 0;
+		
+		loadTimedEvents();
+		loadSlowEvents();
+		loadFastEvents();
 	}
 
 	@Override 
 	public void checkPrompts(long timerValue, float speed, int HRate, double altitude)
 	{
-		Log.d("SimpleMission", "Comparing "+timerValue +" to "+ timePrompts.get(timePromptsMarker).millisTime);
-		if (!voiceFeedback.isSpeaking()){
-			if (timerValue >= timePrompts.get(timePromptsMarker).millisTime){
-				feedback = timePrompts.get(timePromptsMarker).getPrompt();
-				speakOut(feedback);
-				timePromptsMarker++;
-				if (timePromptsMarker >= timePrompts.size()) timePromptsMarker = timePrompts.size()-1;
+		if (timedPromptTracker < timedPrompts.length){
+			if (timerValue >= timedPromptTimers[timedPromptTracker]){
+					speakOut(timedPrompts[timedPromptTracker]);
+					timedPromptTracker++;
+			} else{
+				if (HRate < promptHRs[timedPromptTracker]){
+					if ((timerValue - timeOfLastSpeedPrompt) >= millisBetweenSpeedPrompts){
+						speakOut(slowPrompts[slowPromptTracker]);
+						timeOfLastSpeedPrompt = timerValue;
+					}
+				}
+				if(HRate > promptHRs[timedPromptTracker]){
+					if ((timerValue - timeOfLastSpeedPrompt) >= millisBetweenSpeedPrompts){
+						speakOut(fastPrompts[fastPromptTracker]);
+						timeOfLastSpeedPrompt = timerValue;
+					}
+				}
 			}
-			if (timerValue >= slowPrompts.get(slowPromptsMarker).millisTime)
-				slowPromptsMarker++;
-			if (timerValue >= fastPrompts.get(fastPromptsMarker).millisTime)
-				fastPromptsMarker++;
-			
-			if (slowPromptsMarker >= slowPrompts.size()) slowPromptsMarker = slowPrompts.size()-1;
-			if (fastPromptsMarker >= fastPrompts.size()) fastPromptsMarker = fastPrompts.size()-1;
-		
-			if (timePrompts.get(timePromptsMarker).targetHR < HRate)
-				speakOut(fastPrompts.get(fastPromptsMarker).getPrompt());
-	
-			if (timePrompts.get(timePromptsMarker).targetHR > HRate)
-				speakOut(slowPrompts.get(slowPromptsMarker).getPrompt());
+			if (timerValue >= fastPromptTimers[fastPromptTracker]){
+				fastPromptTracker++;
+				if (fastPromptTracker == fastPromptTimers.length) fastPromptTracker--;
+			}
+			if (timerValue >= slowPromptTimers[slowPromptTracker]){
+				slowPromptTracker++;
+				if (slowPromptTracker == slowPromptTimers.length) slowPromptTracker--;
+			}
 		}
 	}
 
 	@Override
 	public String getFeedbackString(long timerValue)
 	{
-		if (!successfulLoading) return "File "+missionName+" not found.";
-		else{
-				if(timePrompts.size()<=timePromptsMarker){
-					return "Mission Completed";
-				}
-				else return feedback;
-		}
+		if (timedPromptTracker == 0) return "Go!";
+		else return timedPrompts[timedPromptTracker - 1];
 	}
 	public void speakOut(String inString){
 		Log.d("SimpleMission", "SpeakOut asked to utter " + inString);
@@ -139,5 +113,92 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
 	public boolean isReady()
 	{
 		return true;
+	}
+
+	@Override
+	public String getParameter(String parameterName) {
+		return thisMission.getParameter(parameterName);
+	}
+
+	@Override
+	public void setParameter(String parameterName, String valueToSetTo) {
+		thisMission.setParameter(parameterName, valueToSetTo);
+	}
+	private void loadTimedEvents(){
+		timedPromptTracker = 0;
+		String[] tempStringArray = thisMission.getAllMatchingTagValues("TimedEvent");
+		if (tempStringArray.length > 0){
+			timedPromptTimers = new long[tempStringArray.length];
+			timedPrompts = new String[tempStringArray.length];
+			promptHRs = new int[tempStringArray.length];
+			String tempString;
+			for (int i = 0; i < tempStringArray.length; i++){
+				Log.d("simpleMission", "Got " + tempStringArray[i]);
+				
+				tempString = tempStringArray[i].split("/,/")[0];
+				Log.d("simpleMission", "tempString is *" + tempString + "*");
+				timedPromptTimers[i] = Long.parseLong(tempString.replaceAll("\\D+",""));
+				
+				tempString = tempStringArray[i].split("/,/")[1];
+				Log.d("simpleMission", "tempString is *" + tempString + "*");
+				timedPrompts[i] = tempString;
+				
+				tempString = tempStringArray[i].split("/,/")[2];
+				//Remove all non-digits before parsing
+				tempString = tempString.replaceAll("\\D+","");
+
+				Log.d("simpleMission", "tempString is *" + tempString + "*");
+				promptHRs[i] = Integer.parseInt(tempString);
+			}
+		} else {
+			timedPromptTimers = new long[1];
+			timedPromptTimers[0] = 0;
+			
+			timedPrompts = new String[1];
+			timedPrompts[0] = "Error!  No values fetched!";
+			
+			promptHRs = new int[1];
+			promptHRs[0] = 1;
+		}
+	}
+
+	private void loadSlowEvents(){
+		String[] tempStringArray;
+		tempStringArray = thisMission.getAllMatchingTagValues("SlowEvent");
+		slowPromptTimers = new long[tempStringArray.length];
+		slowPrompts = new String[tempStringArray.length];
+		String tempString="";
+		
+		for (int i = 0; i < tempStringArray.length; i++){
+			Log.d("simpleMission", "Got " + tempStringArray[i]);
+			
+			tempString = tempStringArray[i].split("/,/")[0];
+			//Remove all non-digits before parsing
+			tempString = tempString.replaceAll("\\D+","");
+			slowPromptTimers[i] = Long.parseLong(tempString);
+			
+			tempString = tempStringArray[i].split("/,/")[1];
+			slowPrompts[i] = tempString;
+		}
+	}
+	
+	private void loadFastEvents(){
+		String[] tempStringArray;
+		tempStringArray = thisMission.getAllMatchingTagValues("FastEvent");
+		fastPromptTimers = new long[tempStringArray.length];
+		fastPrompts = new String[tempStringArray.length];
+		String tempString="";
+		
+		for (int i = 0; i < tempStringArray.length; i++){
+			Log.d("simpleMission", "Got " + tempStringArray[i]);
+			
+			tempString = tempStringArray[i].split("/,/")[0];
+			//Remove all non-digits before parsing
+			tempString = tempString.replaceAll("\\D+","");
+			fastPromptTimers[i] = Long.parseLong(tempString);
+			
+			tempString = tempStringArray[i].split("/,/")[1];
+			fastPrompts[i] = tempString;
+		}
 	}
 }
