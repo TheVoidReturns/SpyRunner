@@ -38,45 +38,42 @@ public class MissionDownLoadActivity extends Activity {
 		this.finish();
 	}	
 	private void makeFiles(){
-		long[] missionTimings = new long[10];
-		String parsableString = "";
-		String[] missionPrompts = new String [10];
-		String[] promptTitles = new String [10];
-		
-		int[] missionHrZones = new int[10];
-		
-		final long minsToMillis = 1000*60;
-		
-		//3 minutely events
-		for (int i = 0; i<8; i++){
-			missionTimings[i] = 3*minsToMillis*i;
-		}
-		missionTimings[8] = 0;
-		missionTimings[9] = 0;
-		
 		RobinFileWriter currentFile = new RobinFileWriter("Mission Files", "Mission 1.mis");
-		parsableString = "Briefing, Stage 1, Stage 2, Stage 3, Stage 4, Stage 5, Stage 6, Stage 7, Fast, Slow";
-		promptTitles = parsableString.split(", ");
-		parsableString = "Follow the man, Follow the man faster, Follow the man more slowly, Walk with a bizarre limp, " +
-							"Run with your hands in the air, Run like you just don't care, Run like a fat bloke near the end of his run, " +
-							"Warm down, He's getting away!, You're going too fast!";
-		for (int i = 0; i<10; i++){
-			missionHrZones[i] = 3;
-		}
+		String missionFile = "Title:Mission 1\n"+
+				"Description:Go to the briefing\n"+
+				"Briefing:Attend the briefing, given by Major Morgan.\n"+
+				"TimedEvent:1000/,/Go to the briefing location/,/2\n"+
+				"FastEvent:1000/,/No rush!  You don't want to turn up too out of breath!\n"+
+				"SlowEvent:1000/,/You're not going to make it on time at this rate.  Pick it up a bit.\n"+
+				"TimedEvent:300000/,/The major's going to be there early, let's make sure we're there before him!  Step it up to a sustainable jog./,/3\n"+
+				"TimedEvent:600000/,/Stretch it out.  Don't sprint, just pick it up a bit./,/4\n"+
+				"TimedEvent:660000/,/OK, good pace!  Let's have a nice, slow recovery jog./,/2\n"+
+				"TimedEvent:900000/,/Let's try a sprint for one minute/,/5\n"+
+				"TimedEvent:960000/,/Good speed!  Now recover again./,/2\n"+
+				"TimedEvent:1140000/,/That should be better, let's get back to a standard jog./,/3\n"+
+				"TimedEvent:1500000/,/Let's try one last stretch out./,/4\n"+
+				"TimedEvent:1560000/,/And now to finish off.  Just 4 minutes to go./,/3\n"+
+				"TimedEvent:1800000/,/Mission Complete.  You've made it with time to spare./,/3\n";
+		currentFile.Append(missionFile);
 		
-		currentFile.Append(makeAMission("Mission 1", "An easy mission",missionTimings, promptTitles, missionPrompts, missionHrZones));
-	}
-	private String makeAMission(String title, String description, long[] timings, String[] promptTitles, String[] prompts, int[] hrZones){
-		String outString = title + "\n" + description + "\n";
-		
-		for (int i = 0; i < 10; i++){
-			if (i < 8)
-				outString = outString + timings[i] + ";" + promptTitles[i] + ";" + prompts[i] + ";false;" + hrZones[i] + "\n";
-			else
-				outString = outString + timings[i] + ";" + promptTitles[i] + ";" + prompts[i] + ";true;" + hrZones[i] + "\n";
+		currentFile = new RobinFileWriter("Mission Files", "Mission 2.mis");
+		missionFile = "Title:Mission 2\n"+
+				"Description:  Maintain tracking distance to subject.\n"+
+				"Briefing:You are carrying a tracking device, following the location of John Doe, an associate of Mr Big.  You need to be close enough for the device to track, but not so close you're seen...\n"+
+				"TimedEvent:1000/,/Scour the area for the signal/,/2\n"+
+				"FastEvent:300000/,/You're getting too close!\n"+
+				"SlowEvent:300000/,/He's getting away, speed up!.\n"+
+				"TimedEvent:300000/,/Found him, you shuold be able to keep hold of him at your current rate./,/3\n"+
+				"TimedEvent:600000/,/He's sped up, don't lose him./,/4\n"+
+				"TimedEvent:660000/,/Good work!  He's puffed out, and slowed down./,/3\n"+
+				"TimedEvent:900000/,/He's sprinting away from you!  Keep up!/,/5\n"+
+				"TimedEvent:960000/,/OK, he's tired and slowed down a lot./,/2\n"+
+				"TimedEvent:1140000/,/He's recovered, get back to your normal pace./,/3\n"+
+				"TimedEvent:1500000/,/The batteries are getting weak.  Get closer./,/4\n"+
+				"TimedEvent:1560000/,/OK, that's close enough./,/3\n"+
+				"TimedEvent:1800000/,/Mission Complete.  He's gone to ground.  We've got the address./,/3\n";
+		currentFile.Append(missionFile);
 		}
-		return outString;
-	}
 }
 	
 
