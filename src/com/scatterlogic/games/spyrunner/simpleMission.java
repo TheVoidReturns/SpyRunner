@@ -104,7 +104,7 @@ public class simpleMission implements iMission, TextToSpeech.OnInitListener
                 Log.e("TTS", "This Language is not supported");
             } else {
                 voiceFeedback.setSpeechRate((float) 0.8);
-				speakOut("Voice feedback initiated.");
+				speakOut("Intelligence link established.");
                 Log.d("TTS", "Speech enabled");
             }
 
