@@ -24,39 +24,42 @@ public class MissionSelectActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mission_select);
-			availableMissions = new ArrayList<MissionSummary>();
-			final LinearLayout lines = (LinearLayout) findViewById(R.id.lines);
-			Log.d("Mission Select Activity", "So far, so good: lines found.");
-			lines.setScrollContainer(true);
-			lines.setBackgroundColor(Color.RED);
+	}
+	protected void onResume(){
+		super.onResume();
+		availableMissions = new ArrayList<MissionSummary>();
+		final LinearLayout lines = (LinearLayout) findViewById(R.id.lines);
+		Log.d("Mission Select Activity", "So far, so good: lines found.");
+		lines.setScrollContainer(true);
+		lines.setBackgroundColor(Color.RED);		
+		getAvailableMissionList();
+		for (int i = 0; i < availableMissions.size(); i++){
+			Log.d("Mission Select Activity", "About to add " + availableMissions.get(i).mTitle + ".");
+			RelativeLayout nextView = availableMissions.get(i).getWindowBlob();
+			lines.addView(nextView);
+			final String extra = availableMissions.get(i).getFileName();
 			
-			getAvailableMissionList();
-			for (int i = 0; i < availableMissions.size(); i++){
-				Log.d("Mission Select Activity", "About to add " + availableMissions.get(i).mTitle + ".");
-				RelativeLayout nextView = availableMissions.get(i).getWindowBlob();
-				lines.addView(nextView);
-				final String extra = availableMissions.get(i).getFileName();
-				
-				if (!(extra.equals("N/A"))){
-					missionBriefing= new Intent(this, MissionBriefingActivity.class);
-					nextView.setOnClickListener(new OnClickListener() {
-					    public void onClick(View v) {
-							missionBriefing.putExtra("FileName",extra);
-					    	startActivity(missionBriefing);
-					    } 
-					});
-				} else {
-					missionBriefing= new Intent(this, MissionDownLoadActivity.class);
-					nextView.setOnClickListener(new OnClickListener() {
-					    public void onClick(View v) {
-					    	startActivity(missionBriefing);
-					    } 
-					});
+			if (!(extra.equals("N/A"))){
+				missionBriefing= new Intent(this, MissionBriefingActivity.class);
+				nextView.setOnClickListener(new OnClickListener() {
+				    public void onClick(View v) {
+						missionBriefing.putExtra("FileName",extra);
+				    	startActivity(missionBriefing);
+				    } 
+				});
+			} else {
+				missionBriefing= new Intent(this, MissionDownLoadActivity.class);
+				nextView.setOnClickListener(new OnClickListener() {
+				    public void onClick(View v) {
+				    	startActivity(missionBriefing);
+				    } 
+				});
 
-				}
-				
 			}
+			
 		}
+
+	}
 	private void getAvailableMissionList(){
 		try{
 			File missionFolder = new File(Environment.getExternalStorageDirectory()+"/Mission Files");
